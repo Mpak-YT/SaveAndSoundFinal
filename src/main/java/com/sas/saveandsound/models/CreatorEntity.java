@@ -1,4 +1,4 @@
 package com.sas.saveandsound.models;
 
-public class CreatorEntity {
+public class CreatorEntity extends UserEntity {
 }
