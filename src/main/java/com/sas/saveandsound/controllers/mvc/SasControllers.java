@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/SAS")
-public class SaveAndSoundController {
+public class SasControllers {
 
     @GetMapping("")
     public String sasEndpoint() {
@@ -17,7 +17,7 @@ public class SaveAndSoundController {
 
     @GetMapping("/search")
     public String search(
-        @RequestParam(name = "query", required = false, defaultValue = "") String query,
+        @RequestParam(value = "query", required = false, defaultValue = "") String query,
         Model model) {
         if (query.isEmpty()) {
             return "index";

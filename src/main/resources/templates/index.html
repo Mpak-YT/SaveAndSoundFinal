@@ -5,35 +5,32 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SAS</title>
-  <link rel="stylesheet" href="../static/css/main.css">
-  <script src="../static/js/3d.js" defer></script>
-  <script src="../static/js/rain.js" defer></script>
+  <link rel="stylesheet" href="/css/main.css">
+  <script src="/js/3d.js" defer></script>
+  <script src="/js/search.js" defer></script>
 </head>
 <body>
 
-<div class="logo" style="background-image: url(../static/img/logo.svg);"></div>
+<div class="logo" style="background-image: url(/img/logo.svg);"></div>
 
 <section class="layers">
   <div class="layers__container">
-    <div class="layers__item layer-1" style="background-image: url(../static/img/layer-1.jpg);"></div>
-    <div class="layers__item layer-2" style="background-image: url(../static/img/layer-2.png);"></div>
+    <div class="layers__item layer-1" style="background-image: url(/img/layer-1.jpg);"></div>
+    <div class="layers__item layer-2" style="background-image: url(/img/layer-2.png);"></div>
     <div class="layers__item layer-3">
       <div class="hero-content">
         <h1>Save<br>&<br>Sound</h1>
         <div class="hero-content__p">Enjoy</div>
         <form action="/SAS/search" method="get" class="button-start">
           <label>
-            <input type="search" name="query" placeholder="Search...">
+            <input id="searchInput" type="search" name="query" placeholder="Search...">
           </label>
-          <button type="submit">Start enjoy</button>
+          <button id="searchButton" type="submit" disabled style="display: none">Start enjoy</button>
         </form>
       </div>
     </div>
-    <div class="layers__item layer-4">
-      <canvas class="rain"></canvas>
-    </div>
-    <div class="layers__item layer-5" style="background-image: url(../static/img/layer-5.png);"></div>
-    <div class="layers__item layer-6" style="background-image: url(../static/img/layer-6.png);"></div>
+    <div class="layers__item layer-4" style="background-image: url(/img/layer-5.png);"></div>
+    <div class="layers__item layer-5" style="background-image: url(../static/img/layer-6.png);"></div>
   </div>
 </section>
 
