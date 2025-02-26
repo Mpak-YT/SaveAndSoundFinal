@@ -19,17 +19,18 @@ public class SasRestControllers {
         this.soundService = soundService;
     }
 
-    // GET-запрос с Query Parameters: /SAS/search?name=SongTitle
     @GetMapping("/search")
     public ResponseEntity<SoundEntity> requestName(@RequestParam(value = "name") String name) {
-        SoundEntity result = soundService.search(name);
-        return result != null ? ResponseEntity.ok(result) : ResponseEntity.notFound().build();
+        return searchByName(name);
     }
 
-    // GET-запрос с Path Parameters: /SAS/search/SongTitle
     @GetMapping("/search/{name}")
     public ResponseEntity<SoundEntity> pathSong(@PathVariable String name) {
+        return searchByName(name);
+    }
+
+    private ResponseEntity<SoundEntity> searchByName(String name) {
         SoundEntity result = soundService.search(name);
-        return ResponseEntity.ok(result);
+        return result != null ? ResponseEntity.ok(result) : ResponseEntity.notFound().build();
     }
 }
