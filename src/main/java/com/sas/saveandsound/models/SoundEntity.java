@@ -50,12 +50,4 @@ public class SoundEntity {
         this.creators = creators;
     }
 
-    @Override
-    public String toString() {
-        return "SoundEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", creators=" + creators +
-                '}';
-    }
 }
