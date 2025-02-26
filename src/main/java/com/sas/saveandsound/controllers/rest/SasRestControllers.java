@@ -1,6 +1,8 @@
 package com.sas.saveandsound.controllers.rest;
 
 import com.sas.saveandsound.models.SoundEntity;
+import com.sas.saveandsound.service.SoundService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/SAS")
+@RequestMapping("/api/SAS")
 public class SasRestControllers {
 
 //    @GetMapping("/search")
@@ -20,6 +22,22 @@ public class SasRestControllers {
 //        }
 //        return new SoundEntity(query, "query");
 //    }
+
+    private final SoundService soundService;
+
+    public SasRestControllers(SoundService soundService) {
+        this.soundService = soundService;
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<SoundEntity> searchJson(
+        @RequestParam(value = "query", defaultValue = "", required = false) String query) {
+        SoundEntity result = soundService.search(query);
+        if (result != null) {
+            return ResponseEntity.ok(result);
+        }
+        return ResponseEntity.notFound().build();
+    }
 
 //    private final SoundEntity[] sounds = new SoundEntity[]{
 //        new SoundEntity( "a1", "A1", "A2"),
@@ -46,6 +64,8 @@ public class SasRestControllers {
 //        return null;
 //    }
 //
+
+
 //    @GetMapping("/search/{userName}")
 //    public String searchWithPathVariable(@PathVariable String userName) {
 //        return "Hi, " + userName + "! Chang for test commit.";

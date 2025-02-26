@@ -1,13 +1,6 @@
 package com.sas.saveandsound.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
@@ -28,9 +21,9 @@ public class SoundEntity {
     public SoundEntity() {
     }
 
-    public SoundEntity(String name, String... creator) {
+    public SoundEntity(String name, String... creators) {
         this.name = name;
-        this.creators = List.of(creator);  // Преобразуем массив в JSON-строку
+        this.creators = List.of(creators);
     }
 
     public Long getId() {
@@ -49,21 +42,20 @@ public class SoundEntity {
         this.name = name;
     }
 
-    public List<String> getCreator() {
+    public List<String> getCreators() { // Исправлено
         return creators;
     }
 
-    public void setCreator(String... creator) {
-        this.creators = List.of(creator);
+    public void setCreators(List<String> creators) { // Исправлено
+        this.creators = creators;
     }
-/*
+
     @Override
     public String toString() {
         return "SoundEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", creator=" + creators +
+                ", creators=" + creators +
                 '}';
     }
-*/
 }
