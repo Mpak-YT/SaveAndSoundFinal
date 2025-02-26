@@ -1,5 +1,6 @@
 package com.sas.saveandsound.controllers.rest;
 
+import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.models.SoundEntity;
 import com.sas.saveandsound.service.SoundService;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +21,17 @@ public class SasRestControllers {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<SoundEntity> requestName(@RequestParam(value = "name") String name) {
+    public ResponseEntity<SoundDto> requestName(@RequestParam(value = "name") String name) {
         return searchByName(name);
     }
 
     @GetMapping("/search/{name}")
-    public ResponseEntity<SoundEntity> pathSong(@PathVariable String name) {
+    public ResponseEntity<SoundDto> pathSong(@PathVariable String name) {
         return searchByName(name);
     }
 
-    private ResponseEntity<SoundEntity> searchByName(String name) {
-        SoundEntity result = soundService.search(name);
+    private ResponseEntity<SoundDto> searchByName(String name) {
+        SoundDto result = soundService.search(name);
         return result != null ? ResponseEntity.ok(result) : ResponseEntity.notFound().build();
     }
 }
