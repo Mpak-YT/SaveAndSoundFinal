@@ -3,10 +3,14 @@ package com.sas.saveandsound.controllers.rest;
 import com.sas.saveandsound.models.SoundEntity;
 import com.sas.saveandsound.service.SoundService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/SAS")
+@RequestMapping("/api/SAS")
 public class SasRestControllers {
 
     private final SoundService soundService;
@@ -26,6 +30,6 @@ public class SasRestControllers {
     @GetMapping("/search/{name}")
     public ResponseEntity<SoundEntity> pathSong(@PathVariable String name) {
         SoundEntity result = soundService.search(name);
-        return result != null ? ResponseEntity.ok(result) : ResponseEntity.notFound().build();
+        return ResponseEntity.ok(result);
     }
 }

@@ -19,7 +19,8 @@ package com.sas.saveandsound.controllers.mvc;
 //    }
 //
 //    @GetMapping("/search")
-//    public String search(@RequestParam(value = "query", required = false, defaultValue = "") String query, Model model) {
+//    public String search(@RequestParam(value = "query", required = false, defaultValue = "")
+//    String query, Model model) {
 //        SoundEntity result = soundService.search(query);
 //        if (result != null) {
 //            model.addAttribute("soundEntity", result);
