@@ -96,8 +96,6 @@ body {
 	background-color: transparent;
 	color: #fff;
 	border: none;
-	/* border-radius: 10em; */
-	/* border: rgb(255 255 255 / .4) 3px solid; */
 	outline: none;
 	cursor: pointer;
 	margin-top: calc(var(--index) * 2.5);
@@ -105,59 +103,3 @@ body {
 .layer-4, .layer-5 {
 	pointer-events: none;
 }
-
-
-/* *{
-    margin: 0;
-    padding: 0;
-    box-sizing: 0;
-}
-
-body {
-    background-color: black;
-}
-
-.title {
-    text-align: center;
-    font-size: 7.5vw;
-    font-weight: 1000;
-    background: linear-gradient(90deg, #8A17A8, #8C17AB, #8F16AE, #9116B1, #9316B4,
-    #9615B8, #9116B8, #8C18B8, #871AB9, #821BB9,
-    #7B1DB9, #741DB6, #6D1DB3, #661DB0, #5F1DAF,
-    #561DAA, #4F1FA8, #4821A6, #4022A4, #3924A2,
-    #3126A0, #2C269D, #27279A, #222797, #1D2894);
-    background-clip: text;
-    color: transparent;
-    animation: gradient-animation 2s infinite;
-    background-size: 200% 200%;
-}
-
-@keyframes gradient-animation {
-    0% {
-        background-position: 0 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0 50%;
-    }
-}
-.search {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    background-color: black;
-    caret-color: yellow;
-    --block-text-color: yellow;
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Тень 
-}
-.rectangle{
-    width: 200px;
-    height: 200px;
-    background-color: #6D0000;
-} */
-
