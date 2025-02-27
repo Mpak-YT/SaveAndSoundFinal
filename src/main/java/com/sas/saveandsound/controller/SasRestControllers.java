@@ -1,4 +1,4 @@
-package com.sas.saveandsound.controller.rest;
+package com.sas.saveandsound.controller;
 
 import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.service.SoundService;
