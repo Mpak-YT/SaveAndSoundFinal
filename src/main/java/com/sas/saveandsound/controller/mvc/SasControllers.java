@@ -1,4 +1,4 @@
-package com.sas.saveandsound.controllers.mvc;
+package com.sas.saveandsound.controller.mvc;
 //
 //import com.sas.saveandsound.models.SoundEntity;
 //import com.sas.saveandsound.service.SoundService;

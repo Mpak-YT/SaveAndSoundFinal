@@ -1,7 +1,6 @@
-package com.sas.saveandsound.controllers.rest;
+package com.sas.saveandsound.controller.rest;
 
 import com.sas.saveandsound.dto.SoundDto;
-import com.sas.saveandsound.models.SoundEntity;
 import com.sas.saveandsound.service.SoundService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
