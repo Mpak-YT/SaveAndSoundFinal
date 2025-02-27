@@ -10,27 +10,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/SAS")
-public class SasRestControllers {
+@RequestMapping("/api")
+public class SoundController {
 
     private final SoundService soundService;
 
-    public SasRestControllers(SoundService soundService) {
+    public SoundController(SoundService soundService) {
         this.soundService = soundService;
     }
 
     @GetMapping("/search")
-    public ResponseEntity<SoundDto> requestName(@RequestParam(value = "name") String name) {
-        return searchByName(name);
-    }
-
-    @GetMapping("/search/{name}")
-    public ResponseEntity<SoundDto> pathSong(@PathVariable String name) {
-        return searchByName(name);
-    }
-
-    private ResponseEntity<SoundDto> searchByName(String name) {
+    public ResponseEntity<SoundDto> searchByName(@RequestParam(value = "name") String name) {
         SoundDto result = soundService.search(name);
         return result != null ? ResponseEntity.ok(result) : ResponseEntity.notFound().build();
     }
+
+    @GetMapping("/sound/{id}")
+    public ResponseEntity<SoundDto> pathSong(@PathVariable long id) {
+        SoundDto result = soundService.search(id);
+        return result != null ? ResponseEntity.ok(result) : ResponseEntity.notFound().build();
+    }
+
 }

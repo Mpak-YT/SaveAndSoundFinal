@@ -14,9 +14,18 @@ public class SoundService {
         new SoundDto(3L, "name3", List.of("creator2"))
     };
 
-    public SoundDto search(String query) {
+    public SoundDto search(String name) {
         for (SoundDto sound : sounds) {
-            if (sound.getName().equals(query) || query.isEmpty()) {
+            if (sound.getName().equals(name) || name.isEmpty()) {
+                return sound;
+            }
+        }
+        return null;
+    }
+
+    public SoundDto search(long id) {
+        for (SoundDto sound : sounds) {
+            if (sound.getId() == id) {
                 return sound;
             }
         }
