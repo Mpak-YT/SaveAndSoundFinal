@@ -1,10 +1,34 @@
 package com.sas.saveandsound.dto;
 
-import com.sas.saveandsound.common.SoundBase;
+import java.util.HashSet;
+import java.util.Set;
 
-public class SoundDto extends SoundBase {
-    public void setId(Long id) { // Реализация метода для установки id
+public class SoundDto {
+    private Long id;
+    private String name;
+    private Set<UserDto> creators = new HashSet<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
         this.id = id;
     }
-}
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<UserDto> getCreators() {
+        return creators;
+    }
+
+    public void setCreators(Set<UserDto> creators) {
+        this.creators = creators;
+    }
+}

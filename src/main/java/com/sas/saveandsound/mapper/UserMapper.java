@@ -3,22 +3,27 @@ package com.sas.saveandsound.mapper;
 import com.sas.saveandsound.dto.UserDto;
 import com.sas.saveandsound.model.User;
 
+import java.util.stream.Collectors;
+
 public class UserMapper {
 
     private UserMapper() {
-        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+        throw
+            new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
+
     // Маппинг из User в UserDto
     public static UserDto toDto(User user) {
         if (user == null) {
             return null;
         }
-
         UserDto dto = new UserDto();
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setRole(user.getRole());
-        dto.setSounds(user.getSounds()); // Здесь копируется ссылка на Set<User>
+        dto.setSounds(user.getSounds().stream()
+                .map(SoundMapper::toDto)
+                .collect(Collectors.toSet())); // копируется ссылка на Set<User>
         return dto;
     }
 
@@ -27,10 +32,11 @@ public class UserMapper {
         if (dto == null) {
             return null;
         }
-
         User user = new User();
         user.setName(dto.getName());
-        user.setSounds(dto.getSounds()); // Здесь копируется ссылка на Set<User>
+        user.setSounds(dto.getSounds().stream()
+                .map(SoundMapper::toEntity)
+                .collect(Collectors.toSet())); // копируется ссылка на Set<User>
         return user;
     }
 }

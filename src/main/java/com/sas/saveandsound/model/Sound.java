@@ -1,6 +1,5 @@
 package com.sas.saveandsound.model;
 
-import com.sas.saveandsound.common.SoundBase;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,14 +17,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "sounds")
-public class Sound extends SoundBase {
+public class Sound {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Override
-    public Long getId() {
-        return super.getId(); // Получение id из базового класса
-    }
+    private Long id;
 
     @Column(name = "name", columnDefinition = "text", nullable = false)
     private String name;
@@ -38,6 +34,29 @@ public class Sound extends SoundBase {
     )
     private Set<User> creators = new HashSet<>();
 
+    public Sound() {}
+
+    public Sound(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Set<User> getCreators() {
+        return creators;
+    }
+
+    public void setCreators(Set<User> creators) {
+        this.creators = creators;
+    }
 }
-
-

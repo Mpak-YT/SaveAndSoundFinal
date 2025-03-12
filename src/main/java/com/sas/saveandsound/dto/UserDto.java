@@ -10,7 +10,7 @@ public class UserDto {
     private Long id;
     private String name;
     private boolean role;
-    private Set<Sound> sounds = new HashSet<>();
+    private Set<SoundDto> sounds = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -24,11 +24,11 @@ public class UserDto {
         this.name = name;
     }
 
-    public Set<Sound> getSounds() {
+    public Set<SoundDto> getSounds() {
         return sounds;
     }
 
-    public void setSounds(Set<Sound> sounds) {
+    public void setSounds(Set<SoundDto> sounds) {
         this.sounds = sounds;
     }
 
