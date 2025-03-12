@@ -1,27 +1,18 @@
 package com.sas.saveandsound.dto;
 
-import java.util.List;
+import com.sas.saveandsound.model.User;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class SoundDto {
+
     private Long id;
     private String name;
-    private List<String> creators;
-
-    public SoundDto() {
-    }
-
-    public SoundDto(Long id, String name, List<String> creators) {
-        this.id = id;
-        this.name = name;
-        this.creators = creators;
-    }
+    private Set<User> creators = new HashSet<>();
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -32,11 +23,15 @@ public class SoundDto {
         this.name = name;
     }
 
-    public List<String> getCreators() {
+    public Set<User> getCreators() {
         return creators;
     }
 
-    public void setCreators(List<String> creators) {
+    public void setCreators(Set<User> creators) {
         this.creators = creators;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

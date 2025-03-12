@@ -1,6 +1,8 @@
 package com.sas.saveandsound.service;
 
 import com.sas.saveandsound.dto.SoundDto;
+import com.sas.saveandsound.mapper.SoundMapper;
+import com.sas.saveandsound.repository.SoundRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,27 +10,20 @@ import java.util.List;
 @Service
 public class SoundService {
 
-    private final SoundDto[] sounds = new SoundDto[]{
-        new SoundDto(1L, "name1", List.of("creator1", "creator2")),
-        new SoundDto(2L, "name2", List.of("creator1", "creator3")),
-        new SoundDto(3L, "name3", List.of("creator2"))
-    };
+    private final SoundRepository soundRepository;
 
-    public SoundDto search(String name) {
-        for (SoundDto sound : sounds) {
-            if (sound.getName().equals(name) || name.isEmpty()) {
-                return sound;
-            }
-        }
-        return null;
+    public SoundService(SoundRepository soundRepository) {
+        this.soundRepository = soundRepository;
+    }
+
+    public List<SoundDto> search(String name) {
+        return soundRepository.findByName(name)
+                .stream()
+                .map(SoundMapper::toDto)
+                .toList(); // Конвертируем список Sound в список SoundDto
     }
 
     public SoundDto search(long id) {
-        for (SoundDto sound : sounds) {
-            if (sound.getId() == id) {
-                return sound;
-            }
-        }
-        return null;
+        return SoundMapper.toDto(soundRepository.findById(id));
     }
 }
