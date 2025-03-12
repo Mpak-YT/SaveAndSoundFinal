@@ -22,7 +22,10 @@ public class Sound extends SoundBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Пример переопределения, если нужно
+    @Override
+    public Long getId() {
+        return super.getId(); // Получение id из базового класса
+    }
 
     @Column(name = "name", columnDefinition = "text", nullable = false)
     private String name;
