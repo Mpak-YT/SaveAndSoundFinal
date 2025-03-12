@@ -35,9 +35,6 @@ public class Sound extends SoundBase {
     )
     private Set<User> creators = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
 }
 
 
