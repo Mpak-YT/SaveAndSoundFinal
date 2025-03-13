@@ -3,8 +3,12 @@ package com.sas.saveandsound.controller;
 import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.service.SoundService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,16 +25,36 @@ public class SoundController {
         this.soundService = soundService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<SoundDto>> getAllSounds() {
+        List<SoundDto> results = soundService.getAllSounds();
+        return results.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(results);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SoundDto> getSoundById(@PathVariable long id) {
+        SoundDto result = soundService.search(id);
+        return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<SoundDto>> searchByName(@RequestParam(value = "name") String name) {
         List<SoundDto> results = soundService.search(name);
         return results.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(results);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<SoundDto> getSound(@PathVariable long id) {
-        SoundDto result = soundService.search(id);
-        return result != null ? ResponseEntity.ok(result) : ResponseEntity.notFound().build();
+    @PostMapping("/add")
+    public SoundDto createSound(@RequestBody SoundDto soundDto) {
+        return soundService.createSound(soundDto);
     }
 
+    @PutMapping("/{id}")
+    public SoundDto updateSound(@PathVariable long id, @RequestBody SoundDto soundDto) {
+        return soundService.updateSound(id, soundDto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteSound(@PathVariable long id) {
+        soundService.deleteSound(id);
+    }
 }

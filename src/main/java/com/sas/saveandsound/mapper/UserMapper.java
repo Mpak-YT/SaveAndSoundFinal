@@ -1,18 +1,15 @@
 package com.sas.saveandsound.mapper;
 
 import com.sas.saveandsound.dto.UserDto;
+import com.sas.saveandsound.model.Sound;
 import com.sas.saveandsound.model.User;
 
 import java.util.stream.Collectors;
 
 public class UserMapper {
 
-    private UserMapper() {
-        throw
-            new UnsupportedOperationException("This is a utility class and cannot be instantiated");
-    }
+    private UserMapper() {}
 
-    // Маппинг из User в UserDto
     public static UserDto toDto(User user) {
         if (user == null) {
             return null;
@@ -21,22 +18,20 @@ public class UserMapper {
         dto.setId(user.getId());
         dto.setName(user.getName());
         dto.setRole(user.getRole());
-        dto.setSounds(user.getSounds().stream()
-                .map(SoundMapper::toDto)
-                .collect(Collectors.toSet())); // копируется ссылка на Set<User>
+        dto.setSoundIds(user.getSounds().stream()
+                .map(Sound::getId) // Только ID вместо полного объекта SoundDto
+                .collect(Collectors.toSet()));
         return dto;
     }
 
-    // Маппинг из UserDto в User
     public static User toEntity(UserDto dto) {
         if (dto == null) {
             return null;
         }
         User user = new User();
         user.setName(dto.getName());
-        user.setSounds(dto.getSounds().stream()
-                .map(SoundMapper::toEntity)
-                .collect(Collectors.toSet())); // копируется ссылка на Set<User>
+        user.setRole(dto.getRole());
+        // Не заполняем sounds, так как они приходят только как ID (их можно подгружать в сервисе)
         return user;
     }
 }

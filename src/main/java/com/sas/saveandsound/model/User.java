@@ -42,10 +42,6 @@ public class User {
         this.role = role;
     }
 
-    public User(String name) {
-        this.name = name;
-    }
-
     public Long getId() {
         return id;
     }

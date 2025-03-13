@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface SoundRepository extends JpaRepository<Sound, Long> {
 
+    List<Sound> findAll();
+
     List<Sound> findByName(String name);
 
     Sound findById(long id);

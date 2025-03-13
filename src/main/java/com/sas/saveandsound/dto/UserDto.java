@@ -1,7 +1,5 @@
 package com.sas.saveandsound.dto;
 
-import com.sas.saveandsound.model.Sound;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,10 +8,14 @@ public class UserDto {
     private Long id;
     private String name;
     private boolean role;
-    private Set<SoundDto> sounds = new HashSet<>();
+    private Set<Long> soundIds = new HashSet<>();
 
-    public Long getId() {
+    public long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -24,23 +26,19 @@ public class UserDto {
         this.name = name;
     }
 
-    public Set<SoundDto> getSounds() {
-        return sounds;
-    }
-
-    public void setSounds(Set<SoundDto> sounds) {
-        this.sounds = sounds;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public boolean isRole() {
+    public boolean getRole() {
         return role;
     }
 
     public void setRole(boolean role) {
         this.role = role;
+    }
+
+    public Set<Long> getSoundIds() {
+        return soundIds;
+    }
+
+    public void setSoundIds(Set<Long> soundIds) { // исправленный сеттер
+        this.soundIds = soundIds;
     }
 }

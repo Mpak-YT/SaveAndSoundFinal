@@ -6,7 +6,7 @@ import java.util.Set;
 public class SoundDto {
     private Long id;
     private String name;
-    private Set<UserDto> creators = new HashSet<>();
+    private Set<Long> creatorIds = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -24,11 +24,12 @@ public class SoundDto {
         this.name = name;
     }
 
-    public Set<UserDto> getCreators() {
-        return creators;
+    public Set<Long> getCreatorIds() {
+        return creatorIds;
     }
 
-    public void setCreators(Set<UserDto> creators) {
-        this.creators = creators;
+    public void setCreatorIds(Set<Long> creatorIds) {
+        this.creatorIds = creatorIds;
     }
+
 }
