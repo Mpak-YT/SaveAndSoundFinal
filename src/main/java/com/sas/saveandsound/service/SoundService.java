@@ -16,33 +16,31 @@ import java.util.stream.Collectors;
 public class SoundService {
 
     private final SoundRepository soundRepository;
-    private final SoundMapper soundMapper;
 
-    public SoundService(SoundRepository soundRepository, SoundMapper soundMapper) {
+    public SoundService(SoundRepository soundRepository) {
         this.soundRepository = soundRepository;
-        this.soundMapper = soundMapper;
     }
 
     public List<SoundDto> getAllSounds() {
         return soundRepository.findAll()
                 .stream()
-                .map(soundMapper::toDto)
+                .map(SoundMapper::toDto)
                 .toList();
     }
 
     public List<SoundDto> search(String name) {
         return soundRepository.findByName(name)
                 .stream()
-                .map(soundMapper::toDto)
+                .map(SoundMapper::toDto)
                 .toList();
     }
 
     public SoundDto search(long id) {
-        return soundMapper.toDto(soundRepository.findById(id));
+        return SoundMapper.toDto(soundRepository.findById(id));
     }
 
     public SoundDto createSound(SoundDto soundDto) {
-        return soundMapper.toDto(soundRepository.save(soundMapper.toEntity(soundDto)));
+        return SoundMapper.toDto(soundRepository.save(SoundMapper.toEntity(soundDto)));
     }
 
     @Transactional
@@ -54,13 +52,8 @@ public class SoundService {
         existingSound.setName(soundDto.getName()); // Обновляем имя
 
         // Обновляем создателей
-        if (soundDto.getCreatorIds() != null && !soundDto.getCreatorIds().isEmpty()) {
-            Set<User> updatedCreators = soundDto.getCreatorIds().stream()
-                    .map(creatorId -> soundMapper.getUserRepository() // Найти пользователя по ID
-                            .findById(creatorId)
-                            .orElseThrow(() ->
-                                new IllegalArgumentException("User with ID " + creatorId + " not found")))
-                    .collect(Collectors.toSet());
+        if (soundDto.getCreators() != null && !soundDto.getCreators().isEmpty()) {
+            Set<User> updatedCreators = soundDto.getCreators();
             existingSound.setCreators(updatedCreators);
         }
 
@@ -68,7 +61,7 @@ public class SoundService {
         Sound updatedSound = soundRepository.save(existingSound);
 
         // Преобразуем сущность обратно в DTO и возвращаем
-        return soundMapper.toDto(updatedSound);
+        return SoundMapper.toDto(updatedSound);
     }
 
     public void deleteSound(long id) {

@@ -1,5 +1,6 @@
 package com.sas.saveandsound.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,8 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,7 +35,18 @@ public class Sound {
             joinColumns = @JoinColumn(name = "sound_id"),
             inverseJoinColumns = @JoinColumn(name = "creator_id")
     )
+    @JsonBackReference
     private Set<User> creators = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "album_id", nullable = false)
+    private Album album;
+
+    @Column(name = "text", columnDefinition = "text", nullable = true)
+    private String text;
+
+    @Column(name = "date", columnDefinition = "date", nullable = false)
+    private Date date;
 
     public Sound() {}
 
@@ -58,5 +72,29 @@ public class Sound {
 
     public void setCreators(Set<User> creators) {
         this.creators = creators;
+    }
+
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

@@ -1,7 +1,10 @@
 package com.sas.saveandsound.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,13 +30,20 @@ public class User {
     @Column(name = "role", columnDefinition = "boolean", nullable = false)
     private boolean role = false;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "sounds_creators",
             joinColumns = @JoinColumn(name = "creator_id"),
             inverseJoinColumns = @JoinColumn(name = "sound_id")
     )
+    @JsonManagedReference
     private Set<Sound> sounds = new HashSet<>();
+
+    @Column(name = "email", columnDefinition = "text", nullable = false)
+    private String email;
+
+    @Column(name = "nickname", columnDefinition = "text", nullable = false)
+    private String nickname;
 
     public User() {}
 
@@ -68,5 +78,21 @@ public class User {
 
     public void setSounds(Set<Sound> sounds) {
         this.sounds = sounds;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

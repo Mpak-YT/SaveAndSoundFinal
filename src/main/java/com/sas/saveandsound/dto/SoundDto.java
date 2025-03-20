@@ -1,12 +1,19 @@
 package com.sas.saveandsound.dto;
 
+import com.sas.saveandsound.model.Album;
+import com.sas.saveandsound.model.User;
+
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 public class SoundDto {
     private Long id;
     private String name;
-    private Set<Long> creatorIds = new HashSet<>();
+    private Set<User> creators = new HashSet<>();
+    private Album album = new Album();
+    private Date creationDate;
+    private String text;
 
     public Long getId() {
         return id;
@@ -24,12 +31,35 @@ public class SoundDto {
         this.name = name;
     }
 
-    public Set<Long> getCreatorIds() {
-        return creatorIds;
+    public Album getAlbum() {
+        return album;
     }
 
-    public void setCreatorIds(Set<Long> creatorIds) {
-        this.creatorIds = creatorIds;
+    public void setAlbum(Album album) {
+        this.album = album;
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Set<User> getCreators() {
+        return creators;
+    }
+
+    public void setCreators(Set<User> creators) {
+        this.creators = creators;
+    }
 }

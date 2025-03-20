@@ -6,9 +6,7 @@ import com.sas.saveandsound.model.User;
 import com.sas.saveandsound.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class SoundMapper {
@@ -19,20 +17,21 @@ public class SoundMapper {
         this.userRepository = userRepository;
     }
 
-    public SoundDto toDto(Sound sound) {
+    public static SoundDto toDto(Sound sound) {
         if (sound == null) {
             return null;
         }
         SoundDto dto = new SoundDto();
         dto.setId(sound.getId());
         dto.setName(sound.getName());
-        dto.setCreatorIds(sound.getCreators().stream()
-                .map(User::getId)
-                .collect(Collectors.toSet()));
+        dto.setCreators(sound.getCreators());
+        dto.setAlbum(sound.getAlbum());
+        dto.setText(sound.getText());
+        dto.setCreationDate(sound.getDate());
         return dto;
     }
 
-    public Sound toEntity(SoundDto dto) {
+    public static Sound toEntity(SoundDto dto) {
         if (dto == null) {
             return null;
         }
@@ -40,13 +39,12 @@ public class SoundMapper {
         Sound sound = new Sound();
         sound.setName(dto.getName());
 
-        if (!dto.getCreatorIds().isEmpty()) {
-            Set<User> creators = dto.getCreatorIds().stream()
-                    .map(userRepository::findById) // Убираем лишнюю лямбду
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toSet());
+        if (!dto.getCreators().isEmpty()) {
+            Set<User> creators = dto.getCreators();
             sound.setCreators(creators);
+            sound.setAlbum(dto.getAlbum());
+            sound.setText(dto.getText());
+            sound.setDate(dto.getCreationDate());
         }
 
         return sound;

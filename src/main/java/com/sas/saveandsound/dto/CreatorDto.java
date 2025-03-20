@@ -1,10 +1,13 @@
 package com.sas.saveandsound.dto;
 
-public class UserDto {
+import java.util.HashSet;
+import java.util.Set;
+
+public class CreatorDto {
 
     private Long id;
     private String name;
-    private boolean role;
+    private Set<SoundDto> sounds = new HashSet<>();
     private String email;
     private String nickname;
 
@@ -24,12 +27,12 @@ public class UserDto {
         this.name = name;
     }
 
-    public boolean getRole() {
-        return role;
+    public Set<SoundDto> getSounds() {
+        return sounds;
     }
 
-    public void setRole(boolean role) {
-        this.role = role;
+    public void setSounds(Set<SoundDto> sounds) { // исправленный сеттер
+        this.sounds = sounds;
     }
 
     public String getEmail() {
