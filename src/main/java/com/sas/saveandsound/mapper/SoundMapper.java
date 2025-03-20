@@ -2,20 +2,14 @@ package com.sas.saveandsound.mapper;
 
 import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.model.Sound;
-import com.sas.saveandsound.model.User;
-import com.sas.saveandsound.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class SoundMapper {
 
-    private final UserRepository userRepository;
-
-    public SoundMapper(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private SoundMapper() {}
 
     public static SoundDto toDto(Sound sound) {
         if (sound == null) {
@@ -24,10 +18,12 @@ public class SoundMapper {
         SoundDto dto = new SoundDto();
         dto.setId(sound.getId());
         dto.setName(sound.getName());
-        dto.setCreators(sound.getCreators());
+        dto.setCreators(sound.getCreators().stream()
+                .map(UserMapper::toDto)
+                .collect(Collectors.toSet()));
         dto.setAlbum(sound.getAlbum());
+        dto.setDate(sound.getDate());
         dto.setText(sound.getText());
-        dto.setCreationDate(sound.getDate());
         return dto;
     }
 
@@ -35,22 +31,15 @@ public class SoundMapper {
         if (dto == null) {
             return null;
         }
-
         Sound sound = new Sound();
         sound.setName(dto.getName());
-
-        if (!dto.getCreators().isEmpty()) {
-            Set<User> creators = dto.getCreators();
-            sound.setCreators(creators);
-            sound.setAlbum(dto.getAlbum());
-            sound.setText(dto.getText());
-            sound.setDate(dto.getCreationDate());
-        }
-
+        sound.setCreators(dto.getCreators().stream()
+                .map(UserMapper::toEntity)
+                .collect(Collectors.toSet()));
+        sound.setAlbum(dto.getAlbum());
+        sound.setDate(dto.getDate());
+        sound.setText(dto.getText());
         return sound;
     }
 
-    public UserRepository getUserRepository() {
-        return userRepository;
-    }
 }

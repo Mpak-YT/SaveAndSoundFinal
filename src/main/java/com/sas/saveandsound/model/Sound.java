@@ -42,7 +42,7 @@ public class Sound {
     @JoinColumn(name = "album_id", nullable = false)
     private Album album;
 
-    @Column(name = "text", columnDefinition = "text", nullable = true)
+    @Column(name = "text", columnDefinition = "text")
     private String text;
 
     @Column(name = "date", columnDefinition = "date", nullable = false)

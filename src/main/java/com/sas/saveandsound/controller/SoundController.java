@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sounds")
@@ -44,13 +45,13 @@ public class SoundController {
     }
 
     @PostMapping("/add")
-    public SoundDto createSound(@RequestBody SoundDto soundDto) {
-        return soundService.createSound(soundDto);
+    public SoundDto createSound(@RequestBody Map<String, Object> soundData) {
+        return soundService.createSound(soundData);
     }
 
     @PutMapping("/{id}")
-    public SoundDto updateSound(@PathVariable long id, @RequestBody SoundDto soundDto) {
-        return soundService.updateSound(id, soundDto);
+    public SoundDto updateSound(@PathVariable long id, @RequestBody Map<String, Object> soundData) {
+        return soundService.updateSound(id, soundData);
     }
 
     @DeleteMapping("/{id}")

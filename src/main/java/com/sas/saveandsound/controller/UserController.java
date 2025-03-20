@@ -1,6 +1,5 @@
 package com.sas.saveandsound.controller;
 
-import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.dto.UserDto;
 import com.sas.saveandsound.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -33,25 +33,25 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getSoundById(@PathVariable long id) {
-        UserDto result = userService.search(id);
+    public ResponseEntity<Object> getUserById(@PathVariable long id) {
+        UserDto result = userService.searchUser(id);
         return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<UserDto> searchByName(@RequestParam(value = "name") String name) {
+    public ResponseEntity<Object> searchByName(@RequestParam(value = "name") String name) {
         UserDto result = userService.search(name);
         return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
     }
 
     @PostMapping("/add")
-    public UserDto createUser(@RequestBody UserDto userDto) {
-        return userService.createUser(userDto);
+    public UserDto createUser(@RequestBody Map<String, Object> userData) {
+        return userService.createUser(userData);
     }
 
     @PutMapping("/{id}")
-    public UserDto updateUser(@PathVariable long id, @RequestBody UserDto userDto) {
-        return userService.updateUser(id, userDto);
+    public UserDto updateUser(@PathVariable long id, @RequestBody Map<String, Object> userData) {
+        return userService.updateUser(id, userData);
     }
 
     @DeleteMapping("/{id}")

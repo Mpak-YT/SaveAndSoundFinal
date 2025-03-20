@@ -47,4 +47,5 @@ public class UserDto {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
 }
