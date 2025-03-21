@@ -58,4 +58,9 @@ public class SoundController {
     public void deleteSound(@PathVariable long id) {
         soundService.deleteSound(id);
     }
+
+    @DeleteMapping("")
+    public void deleteAll() {
+        soundService.deleteSounds();
+    }
 }

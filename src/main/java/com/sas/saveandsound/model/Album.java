@@ -23,7 +23,7 @@ public class Album {
     @Column(name = "name", columnDefinition = "text", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
     private Set<Sound> sounds = new HashSet<>();
 
     @Column(name = "description", columnDefinition = "text", nullable = true)
@@ -53,5 +53,13 @@ public class Album {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Set<Sound> getSounds() {
+        return sounds;
+    }
+
+    public void setSounds(Set<Sound> sounds) {
+        this.sounds = sounds;
     }
 }

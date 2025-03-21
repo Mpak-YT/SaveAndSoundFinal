@@ -123,4 +123,7 @@ public class UserService {
         return user;
     }
 
+    public void deleteUsers() {
+        userRepository.deleteAll();
+    }
 }

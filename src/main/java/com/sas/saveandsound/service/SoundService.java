@@ -143,4 +143,7 @@ public class SoundService {
         return sound;
     }
 
+    public void deleteSounds() {
+        soundRepository.deleteAll();
+    }
 }

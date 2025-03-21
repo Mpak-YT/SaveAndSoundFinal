@@ -1,16 +1,14 @@
 package com.sas.saveandsound.dto;
 
-import com.sas.saveandsound.model.Album;
-
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 public class SoundDto {
     private Long id;
-    private String name;
     private Set<UserDto> creators = new HashSet<>();
-    private Album album = new Album();
+    private String name;
+    private AlbumNameDto album = new AlbumNameDto();
     private Date date;
     private String text;
 
@@ -30,11 +28,11 @@ public class SoundDto {
         this.name = name;
     }
 
-    public Album getAlbum() {
+    public AlbumNameDto getAlbum() {
         return album;
     }
 
-    public void setAlbum(Album album) {
+    public void setAlbum(AlbumNameDto album) {
         this.album = album;
     }
 

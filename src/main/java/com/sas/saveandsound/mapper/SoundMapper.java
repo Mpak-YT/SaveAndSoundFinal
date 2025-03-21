@@ -21,7 +21,7 @@ public class SoundMapper {
         dto.setCreators(sound.getCreators().stream()
                 .map(UserMapper::toDto)
                 .collect(Collectors.toSet()));
-        dto.setAlbum(sound.getAlbum());
+        dto.setAlbum(AlbumMapper.toAlbumNameDto(sound.getAlbum()));
         dto.setDate(sound.getDate());
         dto.setText(sound.getText());
         return dto;
@@ -36,7 +36,7 @@ public class SoundMapper {
         sound.setCreators(dto.getCreators().stream()
                 .map(UserMapper::toEntity)
                 .collect(Collectors.toSet()));
-        sound.setAlbum(dto.getAlbum());
+        sound.setAlbum(AlbumMapper.toEntity(dto.getAlbum()));
         sound.setDate(dto.getDate());
         sound.setText(dto.getText());
         return sound;

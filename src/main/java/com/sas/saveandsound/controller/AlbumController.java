@@ -1,6 +1,9 @@
 package com.sas.saveandsound.controller;
 
+import com.sas.saveandsound.dto.AlbumDto;
+import com.sas.saveandsound.dto.AlbumNameDto;
 import com.sas.saveandsound.dto.UserDto;
+import com.sas.saveandsound.service.AlbumService;
 import com.sas.saveandsound.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,50 +20,50 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/users")
-public class UserController {
+@RequestMapping("/api/albums")
+public class AlbumController {
 
-    private final UserService userService;
+    private final AlbumService albumService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public AlbumController(AlbumService albumService) {
+        this.albumService = albumService;
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> results = userService.getAllUsers();
+    public ResponseEntity<List<AlbumNameDto>> getAllUsers() {
+        List<AlbumNameDto> results = albumService.getAllAlbums();
         return results.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(results);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable long id) {
-        UserDto result = userService.searchUser(id);
+    public ResponseEntity<AlbumDto> getUserById(@PathVariable long id) {
+        AlbumDto result = albumService.search(id);
         return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchByName(@RequestParam(value = "name") String name) {
-        UserDto result = userService.search(name);
+    public ResponseEntity<List<AlbumDto>> searchByName(@RequestParam(value = "name") String name) {
+        List<AlbumDto> result = albumService.search(name);
         return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
     }
 
     @PostMapping("/add")
-    public UserDto createUser(@RequestBody Map<String, Object> userData) {
-        return userService.createUser(userData);
+    public AlbumDto createAlbum(@RequestBody Map<String, Object> albumData) {
+        return albumService.createAlbum(albumData);
     }
 
     @PutMapping("/{id}")
-    public UserDto updateUser(@PathVariable long id, @RequestBody Map<String, Object> userData) {
-        return userService.updateUser(id, userData);
+    public AlbumDto updateAlbum(@PathVariable long id, @RequestBody Map<String, Object> albumData) {
+        return albumService.updateAlbum(id, albumData);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable long id) {
-        userService.deleteUser(id);
+        albumService.deleteAlbum(id);
     }
 
     @DeleteMapping("")
     public void deleteAll() {
-        userService.deleteUsers();
+        albumService.deleteAllAlbums();
     }
 }
