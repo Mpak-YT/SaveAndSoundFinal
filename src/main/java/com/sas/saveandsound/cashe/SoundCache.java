@@ -18,4 +18,16 @@ public class SoundCache extends LinkedHashMap<String, List<Sound>> {
     protected boolean removeEldestEntry(Map.Entry<String, List<Sound>> eldest) {
         return size() > maxSize; // Удаляем самый старый элемент, если превышен размер
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SoundCache other)) return false;
+        return maxSize == other.maxSize && super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
