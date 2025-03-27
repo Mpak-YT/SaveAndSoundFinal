@@ -44,6 +44,16 @@ public class SoundController {
         return results.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(results);
     }
 
+    @GetMapping("/by-user")
+    public List<SoundDto> getSoundsByUserName(@RequestParam String userName) {
+        return soundService.getSoundsByUserName(userName);
+    }
+
+    @GetMapping("/by-album")
+    public List<SoundDto> getSoundsByAlbumName(@RequestParam String albumName) {
+        return soundService.getSoundsByAlbumName(albumName);
+    }
+
     @PostMapping("/add")
     public SoundDto createSound(@RequestBody Map<String, Object> soundData) {
         return soundService.createSound(soundData);

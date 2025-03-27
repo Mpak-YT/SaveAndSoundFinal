@@ -1,5 +1,6 @@
 package com.sas.saveandsound.service;
 
+import com.sas.saveandsound.cashe.SoundCache;
 import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.mapper.SoundMapper;
 import com.sas.saveandsound.model.Album;
@@ -10,6 +11,8 @@ import com.sas.saveandsound.repository.SoundRepository;
 import com.sas.saveandsound.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -24,12 +27,17 @@ public class SoundService {
     private final SoundRepository soundRepository;
     private final AlbumRepository albumRepository;
     private final UserRepository userRepository;
+    private final SoundCache soundCache; // Используем SoundCache вместо Map
+    private static final Logger logger = LoggerFactory.getLogger(SoundService.class);
 
     public SoundService(SoundRepository soundRepository,
-                        AlbumRepository albumRepository, UserRepository userRepository) {
+                        AlbumRepository albumRepository,
+                        UserRepository userRepository,
+                        SoundCache soundCache) {
         this.soundRepository = soundRepository;
         this.albumRepository = albumRepository;
         this.userRepository = userRepository;
+        this.soundCache = soundCache;
     }
 
     public List<SoundDto> getAllSounds() {
@@ -54,13 +62,13 @@ public class SoundService {
     public SoundDto createSound(Map<String, Object> soundData) {
         Sound newSound = mapSoundFields(new Sound(), soundData);
 
-        // Если альбом ещё не сохранён, сохраняем его.
+        // Сохранение альбома, если он не сохранён
         if (newSound.getAlbum() != null && newSound.getAlbum().getId() == null) {
             Album savedAlbum = albumRepository.save(newSound.getAlbum());
             newSound.setAlbum(savedAlbum);
         }
 
-        // Теперь сохраняем звук
+        // Сохранение звука
         Sound savedSound = soundRepository.save(newSound);
         return SoundMapper.toDto(savedSound);
     }
@@ -73,23 +81,35 @@ public class SoundService {
             throw new EntityNotFoundException("Sound not found");
         }
 
-        // Обновляем поля звука
+        // Обновление полей звука
         Sound existSound = mapSoundFields(existingSound, soundData);
 
-        // Если альбом ещё не сохранён, сохраняем его.
+        // Сохранение альбома, если он не сохранён
         if (existSound.getAlbum() != null && existSound.getAlbum().getId() == null) {
             Album savedAlbum = albumRepository.save(existSound.getAlbum());
             existSound.setAlbum(savedAlbum);
         }
 
-        // Теперь сохраняем обновлённый звук
+        // Сохранение обновлённого звука
         Sound updatedSound = soundRepository.save(existSound);
         return SoundMapper.toDto(updatedSound);
     }
 
+    public void deleteSound(long soundId) {
+        // Удаление звука из базы данных
+        Sound sound = soundRepository.findById(soundId);
+        soundRepository.delete(sound);
 
-    public void deleteSound(long id) {
-        soundRepository.deleteById(id);
+        // Обновление кэша
+        soundCache.forEach((key, cachedSounds) -> {
+            cachedSounds.removeIf(cachedSound -> cachedSound.getId().equals(soundId));
+            if (cachedSounds.isEmpty()) {
+                logger.info("Cache entry for '{}' is now empty and will be removed", key);
+                soundCache.remove(key);
+            }
+        });
+
+        logger.info("Sound with id '{}' deleted and cache updated", soundId);
     }
 
     private Sound mapSoundFields(Sound sound, Map<String, Object> soundData) {
@@ -103,7 +123,7 @@ public class SoundService {
             sound.setDate(Date.valueOf((String) soundData.get("date")));
         }
 
-        // Привязываем альбом, если он указан
+        // Привязываем альбом, если указан
         if (soundData.containsKey("album")) {
             Map<String, Object> albumData = (Map<String, Object>) soundData.get("album");
 
@@ -123,13 +143,13 @@ public class SoundService {
             sound.setAlbum(album);
         }
 
-        // Обновляем креаторов
+        // Обновляем список создателей
         if (soundData.containsKey("creators")) {
             List<Map<String, Object>> creatorData = (List<Map<String, Object>>) soundData.get("creators");
 
             Set<User> creators = creatorData.stream()
                     .map(data -> {
-                        Long userId = ((Number) data.get("id")).longValue(); // Преобразуем ID в Long
+                        Long userId = ((Number) data.get("id")).longValue();
                         return userRepository.findById(userId)
                                 .orElseThrow(() ->
                                         new EntityNotFoundException("User not found with ID: " + userId));
@@ -139,11 +159,58 @@ public class SoundService {
             sound.setCreators(creators);
         }
 
-
         return sound;
     }
 
     public void deleteSounds() {
         soundRepository.deleteAll();
+    }
+
+    public List<SoundDto> getSoundsByUserName(String userName) {
+        if (soundCache.containsKey(userName)) {
+            logger.info("Cache hit: Data found for user '{}'", userName);
+            return soundCache.get(userName).stream()
+                    .map(SoundMapper::toDto)
+                    .toList();
+        }
+
+        logger.info("Cache miss: No data for user '{}'. Fetching from database...", userName);
+
+        List<Sound> sounds = soundRepository.findSoundsByUserNameJPQL(userName);
+
+        if (sounds.isEmpty()) {
+            logger.warn("No sounds found in database for user '{}'", userName);
+        } else {
+            logger.info("Data fetched from database for user '{}'. Adding to cache...", userName);
+            soundCache.put(userName, sounds);
+        }
+
+        return sounds.stream()
+                .map(SoundMapper::toDto)
+                .toList();
+    }
+
+    public List<SoundDto> getSoundsByAlbumName(String albumName) {
+        if (soundCache.containsKey(albumName)) {
+            logger.info("Cache hit: Data found for album '{}'", albumName);
+            return soundCache.get(albumName).stream()
+                    .map(SoundMapper::toDto)
+                    .toList();
+        }
+
+        logger.info("Cache miss: No data for album '{}'. Fetching from database...", albumName);
+
+        List<Sound> sounds = soundRepository.findSoundsByAlbumNameNative(albumName);
+
+        if (sounds.isEmpty()) {
+            logger.warn("No sounds found in database for album '{}'", albumName);
+        } else {
+            logger.info("Data fetched from database for album '{}'. Adding to cache...", albumName);
+            soundCache.put(albumName, sounds);
+        }
+
+        return sounds.stream()
+                .map(SoundMapper::toDto)
+                .toList();
     }
 }

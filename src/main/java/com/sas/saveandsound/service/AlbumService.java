@@ -66,7 +66,6 @@ public class AlbumService {
     public void deleteAlbum(long id) {
         Album album = albumRepository.findById(id);
         if (album != null) {
-            album.getSounds().clear(); // Очистить коллекцию звуков
             albumRepository.deleteById(id); // Удалить альбом
         }
     }
