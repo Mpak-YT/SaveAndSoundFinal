@@ -188,9 +188,9 @@ public class SoundService {
         List<Sound> sounds = soundRepository.findSoundsByUserNameJPQL(userName);
 
         if (sounds.isEmpty()) {
-            logger.warn("No sounds found in database for user '{}'", userName);
+            logger.warn("No sounds found in database for user '{}'", sanitizedUserName);
         } else {
-            logger.info("Data fetched from database for user '{}'. Adding to cache...", userName);
+            logger.info("Data fetched from database for user '{}'. Adding to cache...", sanitizedUserName);
             soundCache.put(userName, sounds);
         }
 
@@ -200,21 +200,22 @@ public class SoundService {
     }
 
     public List<SoundDto> getSoundsByAlbumName(String albumName) {
+        String sanitizedAlbumName = albumName.replaceAll("[\\n\\r\\t]", "_"); // Замена управляющих символов
         if (soundCache.containsKey(albumName)) {
-            logger.info("Cache hit: Data found for album '{}'", albumName);
+            logger.info("Cache hit: Data found for album '{}'", sanitizedAlbumName);
             return soundCache.get(albumName).stream()
                     .map(SoundMapper::toDto)
                     .toList();
         }
 
-        logger.info("Cache miss: No data for album '{}'. Fetching from database...", albumName);
+        logger.info("Cache miss: No data for album '{}'. Fetching from database...", sanitizedAlbumName);
 
         List<Sound> sounds = soundRepository.findSoundsByAlbumNameNative(albumName);
 
         if (sounds.isEmpty()) {
-            logger.warn("No sounds found in database for album '{}'", albumName);
+            logger.warn("No sounds found in database for album '{}'", sanitizedAlbumName);
         } else {
-            logger.info("Data fetched from database for album '{}'. Adding to cache...", albumName);
+            logger.info("Data fetched from database for album '{}'. Adding to cache...", sanitizedAlbumName);
             soundCache.put(albumName, sounds);
         }
 
