@@ -2,6 +2,7 @@ package com.sas.saveandsound.service;
 
 import com.sas.saveandsound.cashe.SoundCache;
 import com.sas.saveandsound.dto.SoundDto;
+import com.sas.saveandsound.exception.SoundNotFoundException;
 import com.sas.saveandsound.mapper.SoundMapper;
 import com.sas.saveandsound.model.Album;
 import com.sas.saveandsound.model.Sound;
@@ -96,8 +97,14 @@ public class SoundService {
     }
 
     public void deleteSound(long soundId) {
-        // Удаление звука из базы данных
+        // Проверяем существование звука
         Sound sound = soundRepository.findById(soundId);
+        if (sound == null) {
+            throw new SoundNotFoundException("Unable to delete sound with ID "
+                    + soundId + ". Sound not found.");
+        }
+
+        // Удаление звука из базы данных
         soundRepository.delete(sound);
 
         // Обновление кэша
@@ -111,6 +118,7 @@ public class SoundService {
 
         logger.info("Sound with id '{}' deleted and cache updated", soundId);
     }
+
 
     private Sound mapSoundFields(Sound sound, Map<String, Object> soundData) {
         if (soundData.containsKey("name")) {

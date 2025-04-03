@@ -1,6 +1,7 @@
 package com.sas.saveandsound.controller;
 
 import com.sas.saveandsound.dto.UserDto;
+import com.sas.saveandsound.exception.UserNotFoundException;
 import com.sas.saveandsound.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,38 +30,55 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> results = userService.getAllUsers();
-        return results.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(results);
+        if (results.isEmpty()) {
+            throw new UserNotFoundException("No users found.");
+        }
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable long id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable long id) {
         UserDto result = userService.searchUser(id);
-        return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
+        if (result == null) {
+            throw new UserNotFoundException("User with ID " + id + " not found.");
+        }
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchByName(@RequestParam(value = "name") String name) {
+    public ResponseEntity<UserDto> searchByName(@RequestParam(value = "name") String name) {
         UserDto result = userService.search(name);
-        return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
+        if (result == null) {
+            throw new UserNotFoundException("No user found with the name '" + name + "'.");
+        }
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/add")
-    public UserDto createUser(@RequestBody Map<String, Object> userData) {
-        return userService.createUser(userData);
+    public ResponseEntity<UserDto> createUser(@RequestBody Map<String, Object> userData) {
+        UserDto createdUser = userService.createUser(userData);
+        return ResponseEntity.ok(createdUser);
     }
 
     @PutMapping("/{id}")
-    public UserDto updateUser(@PathVariable long id, @RequestBody Map<String, Object> userData) {
-        return userService.updateUser(id, userData);
+    public ResponseEntity<UserDto> updateUser(@PathVariable long id,
+                                              @RequestBody Map<String, Object> userData) {
+        UserDto updatedUser = userService.updateUser(id, userData);
+        if (updatedUser == null) {
+            throw new UserNotFoundException("Unable to update user with ID " + id + ". User not found.");
+        }
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable long id) {
         userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("")
-    public void deleteAll() {
+    public ResponseEntity<Void> deleteAll() {
         userService.deleteUsers();
+        return ResponseEntity.noContent().build();
     }
 }

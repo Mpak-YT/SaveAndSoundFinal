@@ -2,9 +2,8 @@ package com.sas.saveandsound.controller;
 
 import com.sas.saveandsound.dto.AlbumDto;
 import com.sas.saveandsound.dto.AlbumNameDto;
-import com.sas.saveandsound.dto.UserDto;
+import com.sas.saveandsound.exception.AlbumNotFoundException;
 import com.sas.saveandsound.service.AlbumService;
-import com.sas.saveandsound.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,40 +29,57 @@ public class AlbumController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AlbumNameDto>> getAllUsers() {
+    public ResponseEntity<List<AlbumNameDto>> getAllAlbums() {
         List<AlbumNameDto> results = albumService.getAllAlbums();
-        return results.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(results);
+        if (results.isEmpty()) {
+            throw new AlbumNotFoundException("No albums found.");
+        }
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AlbumDto> getUserById(@PathVariable long id) {
+    public ResponseEntity<AlbumDto> getAlbumById(@PathVariable long id) {
         AlbumDto result = albumService.search(id);
-        return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
+        if (result == null) {
+            throw new AlbumNotFoundException("Album with ID " + id + " not found.");
+        }
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<AlbumDto>> searchByName(@RequestParam(value = "name") String name) {
         List<AlbumDto> result = albumService.search(name);
-        return result == null ? ResponseEntity.notFound().build() : ResponseEntity.ok(result);
+        if (result == null || result.isEmpty()) {
+            throw new AlbumNotFoundException("No albums found with the name '" + name + "'.");
+        }
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/add")
-    public AlbumDto createAlbum(@RequestBody Map<String, Object> albumData) {
-        return albumService.createAlbum(albumData);
+    public ResponseEntity<AlbumDto> createAlbum(@RequestBody Map<String, Object> albumData) {
+        AlbumDto createdAlbum = albumService.createAlbum(albumData);
+        return ResponseEntity.ok(createdAlbum);
     }
 
     @PutMapping("/{id}")
-    public AlbumDto updateAlbum(@PathVariable long id, @RequestBody Map<String, Object> albumData) {
-        return albumService.updateAlbum(id, albumData);
+    public ResponseEntity<AlbumDto> updateAlbum(@PathVariable long id,
+                                                @RequestBody Map<String, Object> albumData) {
+        AlbumDto updatedAlbum = albumService.updateAlbum(id, albumData);
+        if (updatedAlbum == null) {
+            throw new AlbumNotFoundException("Unable to update album with ID " + id + ". Album not found.");
+        }
+        return ResponseEntity.ok(updatedAlbum);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable long id) {
+    public ResponseEntity<Void> deleteAlbum(@PathVariable long id) {
         albumService.deleteAlbum(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("")
-    public void deleteAll() {
+    public ResponseEntity<Void> deleteAllAlbums() {
         albumService.deleteAllAlbums();
+        return ResponseEntity.noContent().build();
     }
 }

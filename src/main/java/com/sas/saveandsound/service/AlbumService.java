@@ -2,6 +2,7 @@ package com.sas.saveandsound.service;
 
 import com.sas.saveandsound.dto.AlbumDto;
 import com.sas.saveandsound.dto.AlbumNameDto;
+import com.sas.saveandsound.exception.AlbumNotFoundException;
 import com.sas.saveandsound.mapper.AlbumMapper;
 import com.sas.saveandsound.mapper.SoundMapper;
 import com.sas.saveandsound.model.Album;
@@ -65,10 +66,12 @@ public class AlbumService {
     @Transactional
     public void deleteAlbum(long id) {
         Album album = albumRepository.findById(id);
-        if (album != null) {
-            albumRepository.deleteById(id); // Удалить альбом
+        if (album == null) {
+            throw new AlbumNotFoundException("Unable to delete album with ID " + id + ". Album not found.");
         }
+        albumRepository.deleteById(id); // Удалить альбом
     }
+
 
     // Вынесенный метод для заполнения/обновления полей альбома
     private Album mapAlbumFields(Album album, Map<String, Object> albumData) {

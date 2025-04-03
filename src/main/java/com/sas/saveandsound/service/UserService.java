@@ -1,6 +1,7 @@
 package com.sas.saveandsound.service;
 
 import com.sas.saveandsound.dto.UserDto;
+import com.sas.saveandsound.exception.UserNotFoundException;
 import com.sas.saveandsound.mapper.SoundMapper;
 import com.sas.saveandsound.mapper.UserMapper;
 import com.sas.saveandsound.model.Sound;
@@ -83,6 +84,9 @@ public class UserService {
     }
 
     public void deleteUser(long id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException("Unable to delete user with ID " + id + ". User not found.");
+        }
         userRepository.deleteById(id);
     }
 
