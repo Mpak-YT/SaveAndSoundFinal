@@ -175,14 +175,15 @@ public class SoundService {
     }
 
     public List<SoundDto> getSoundsByUserName(String userName) {
+        String sanitizedUserName = userName.replaceAll("[\\n\\r\\t]", "_");
         if (soundCache.containsKey(userName)) {
-            logger.info("Cache hit: Data found for user '{}'", userName);
+            logger.info("Cache hit: Data found for user '{}'", sanitizedUserName);
             return soundCache.get(userName).stream()
                     .map(SoundMapper::toDto)
                     .toList();
         }
 
-        logger.info("Cache miss: No data for user '{}'. Fetching from database...", userName);
+        logger.info("Cache miss: No data for user '{}'. Fetching from database...", sanitizedUserName);
 
         List<Sound> sounds = soundRepository.findSoundsByUserNameJPQL(userName);
 

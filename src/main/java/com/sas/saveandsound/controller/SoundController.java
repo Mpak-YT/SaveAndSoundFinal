@@ -58,7 +58,8 @@ public class SoundController {
     public ResponseEntity<List<SoundDto>> getSoundsByUserName(@RequestParam String userName) {
         List<SoundDto> results = soundService.getSoundsByUserName(userName);
         if (results.isEmpty()) {
-            throw new SoundNotFoundException("No sounds found for user '" + userName + "'.");
+            String sanitizedUserName = userName.replaceAll("[\\n\\r\\t]", "_"); // Замена управляющих символов
+            throw new SoundNotFoundException("No sounds found for user '" + sanitizedUserName + "'.");
         }
         return ResponseEntity.ok(results);
     }
