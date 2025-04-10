@@ -40,34 +40,38 @@ public class SoundController {
     @GetMapping
     public ResponseEntity<List<SoundDto>> getAllSounds() {
         logger.info("Fetching all sounds...");
-        List<SoundDto> results = soundService.getAllSounds();
-        if (results.isEmpty()) {
+        List<SoundDto> sounds = soundService.getAllSounds();
+        if (sounds.isEmpty()) {
             logger.warn("No sounds found.");
             throw new SoundNotFoundException("No sounds found.");
         }
-        logger.info("Found {} sounds.", results.size());
-        return ResponseEntity.ok(results);
+        logger.info("Found {} sounds.", sounds.size());
+        return ResponseEntity.ok(sounds);
     }
 
     @Operation(summary = "Get sound by ID", description = "Fetch a sound by its ID.")
     @GetMapping("/{id}")
     public ResponseEntity<SoundDto> getSoundById(
-            @Parameter(description = "ID of the sound to fetch") @PathVariable long id) {
+            @Parameter(description = "ID of the sound to fetch")
+            @PathVariable long id
+    ) {
         logger.info("Fetching sound with ID: {}", id);
-        SoundDto result = soundService.search(id);
-        if (result == null) {
+        SoundDto sound = soundService.search(id);
+        if (sound == null) {
             logger.error("Sound with ID {} not found.", id);
             throw new SoundNotFoundException("Sound with ID " + id + " not found.");
         }
         logger.info("Sound with ID {} retrieved successfully.", id);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(sound);
     }
 
     @Operation(summary = "Search sounds by name", description = "Search for sounds by their name.")
     @GetMapping("/search")
     public ResponseEntity<List<SoundDto>> searchByName(
             @Parameter(description = "Name of the sound to search for")
-            @RequestParam(value = "name") String name) {
+            @RequestParam(value = "name") String name
+    ) {
+        name = name.replaceAll("[\\n\\r\\t]", "_");
         logger.info("Searching for sounds with name: {}", name);
         List<SoundDto> results = soundService.search(name);
         if (results.isEmpty()) {
