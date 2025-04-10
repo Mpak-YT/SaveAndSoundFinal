@@ -122,7 +122,12 @@ public class SoundService {
 
     private Sound mapSoundFields(Sound sound, Map<String, Object> soundData) {
         if (soundData.containsKey("name")) {
-            sound.setName((String) soundData.get("name"));
+            String name = (String) soundData.get("name");
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("Sound name cannot be null, empty," +
+                        " or contain only spaces");
+            }
+            sound.setName(name);
         }
         if (soundData.containsKey("text")) {
             sound.setText((String) soundData.get("text"));

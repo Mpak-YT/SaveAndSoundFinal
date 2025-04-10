@@ -76,7 +76,12 @@ public class AlbumService {
     // Вынесенный метод для заполнения/обновления полей альбома
     private Album mapAlbumFields(Album album, Map<String, Object> albumData) {
         if (albumData.containsKey("name")) {
-            album.setName((String) albumData.get("name"));
+            String name = (String) albumData.get("name");
+            if (name == null || name.trim().isEmpty()) {
+                throw new IllegalArgumentException("Album name cannot be null, empty," +
+                        " or contain only spaces");
+            }
+            album.setName(name);
         }
         if (albumData.containsKey("description")) {
             album.setDescription((String) albumData.get("description"));
@@ -124,8 +129,6 @@ public class AlbumService {
 
         return album;
     }
-
-
 
     @Transactional
     public void deleteAllAlbums() {

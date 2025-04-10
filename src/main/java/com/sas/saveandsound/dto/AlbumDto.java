@@ -1,5 +1,7 @@
 package com.sas.saveandsound.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -7,6 +9,7 @@ public class AlbumDto {
 
     private Long id;
 
+    @NotBlank(message = "Album name cannot be null, empty, or contain only spaces")
     private String name;
 
     private Set<SoundDto> sounds = new HashSet<>();

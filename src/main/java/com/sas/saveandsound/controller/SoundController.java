@@ -3,6 +3,12 @@ package com.sas.saveandsound.controller;
 import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.exception.SoundNotFoundException;
 import com.sas.saveandsound.service.SoundService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +25,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sounds")
+@Tag(name = "Sound API", description = "API for managing sounds")
 public class SoundController {
+
+    private static final Logger logger = LoggerFactory.getLogger(SoundController.class);
 
     private final SoundService soundService;
 
@@ -27,74 +36,116 @@ public class SoundController {
         this.soundService = soundService;
     }
 
+    @Operation(summary = "Get all sounds", description = "Fetch all available sounds.")
     @GetMapping
     public ResponseEntity<List<SoundDto>> getAllSounds() {
+        logger.info("Fetching all sounds...");
         List<SoundDto> results = soundService.getAllSounds();
         if (results.isEmpty()) {
+            logger.warn("No sounds found.");
             throw new SoundNotFoundException("No sounds found.");
         }
+        logger.info("Found {} sounds.", results.size());
         return ResponseEntity.ok(results);
     }
 
+    @Operation(summary = "Get sound by ID", description = "Fetch a sound by its ID.")
     @GetMapping("/{id}")
-    public ResponseEntity<SoundDto> getSoundById(@PathVariable long id) {
+    public ResponseEntity<SoundDto> getSoundById(
+            @Parameter(description = "ID of the sound to fetch") @PathVariable long id) {
+        logger.info("Fetching sound with ID: {}", id);
         SoundDto result = soundService.search(id);
         if (result == null) {
+            logger.error("Sound with ID {} not found.", id);
             throw new SoundNotFoundException("Sound with ID " + id + " not found.");
         }
+        logger.info("Sound with ID {} retrieved successfully.", id);
         return ResponseEntity.ok(result);
     }
 
+    @Operation(summary = "Search sounds by name", description = "Search for sounds by their name.")
     @GetMapping("/search")
-    public ResponseEntity<List<SoundDto>> searchByName(@RequestParam(value = "name") String name) {
+    public ResponseEntity<List<SoundDto>> searchByName(
+            @Parameter(description = "Name of the sound to search for")
+            @RequestParam(value = "name") String name) {
+        logger.info("Searching for sounds with name: {}", name);
         List<SoundDto> results = soundService.search(name);
         if (results.isEmpty()) {
+            logger.warn("No sounds found with the name '{}'.", name);
             throw new SoundNotFoundException("No sounds found with the name '" + name + "'.");
         }
+        logger.info("Found {} sounds with the name '{}'.", results.size(), name);
         return ResponseEntity.ok(results);
     }
 
+    @Operation(summary = "Get sounds by user name",
+            description = "Fetch all sounds created by a specific user.")
     @GetMapping("/by-user")
-    public ResponseEntity<List<SoundDto>> getSoundsByUserName(@RequestParam String userName) {
+    public ResponseEntity<List<SoundDto>> getSoundsByUserName(
+            @Parameter(description = "User name associated with the sounds") @RequestParam String userName) {
+        logger.info("Fetching sounds for user: {}", userName);
         List<SoundDto> results = soundService.getSoundsByUserName(userName);
         if (results.isEmpty()) {
-            String sanitizedUserName = userName.replaceAll("[\\n\\r\\t]", "_"); // Замена управляющих символов
+            String sanitizedUserName = userName.replaceAll("[\\n\\r\\t]", "_");
+            logger.warn("No sounds found for user '{}'.", sanitizedUserName);
             throw new SoundNotFoundException("No sounds found for user '" + sanitizedUserName + "'.");
         }
+        logger.info("Found {} sounds for user '{}'.", results.size(), userName);
         return ResponseEntity.ok(results);
     }
 
+    @Operation(summary = "Get sounds by album name",
+            description = "Fetch all sounds associated with a specific album.")
     @GetMapping("/by-album")
-    public ResponseEntity<List<SoundDto>> getSoundsByAlbumName(@RequestParam String albumName) {
+    public ResponseEntity<List<SoundDto>> getSoundsByAlbumName(
+            @Parameter(description = "Album name associated with the sounds")
+            @RequestParam String albumName) {
+        logger.info("Fetching sounds for album: {}", albumName);
         List<SoundDto> results = soundService.getSoundsByAlbumName(albumName);
         if (results.isEmpty()) {
+            logger.warn("No sounds found for album '{}'.", albumName);
             throw new SoundNotFoundException("No sounds found for album '" + albumName + "'.");
         }
+        logger.info("Found {} sounds for album '{}'.", results.size(), albumName);
         return ResponseEntity.ok(results);
     }
 
+    @Operation(summary = "Create a new sound",
+            description = "Add a new sound with the provided details.")
     @PostMapping("/add")
-    public ResponseEntity<SoundDto> createSound(@RequestBody Map<String, Object> soundData) {
+    public ResponseEntity<SoundDto> createSound(
+            @Valid @RequestBody Map<String, Object> soundData) {
+        logger.info("Creating a new sound with data: {}", soundData);
         SoundDto createdSound = soundService.createSound(soundData);
+        logger.info("Sound successfully created with ID: {}", createdSound.getId());
         return ResponseEntity.ok(createdSound);
     }
 
+    @Operation(summary = "Update a sound",
+            description = "Update an existing sound by its ID.")
     @PutMapping("/{id}")
-    public ResponseEntity<SoundDto> updateSound(@PathVariable long id,
-                                                @RequestBody Map<String, Object> soundData) {
+    public ResponseEntity<SoundDto> updateSound(
+            @Parameter(description = "ID of the sound to update") @PathVariable long id,
+            @RequestBody Map<String, Object> soundData) {
+        logger.info("Updating sound with ID: {} and data: {}", id, soundData);
         SoundDto updatedSound = soundService.updateSound(id, soundData);
         if (updatedSound == null) {
+            logger.error("Failed to update sound with ID {}. Sound not found.", id);
             throw new SoundNotFoundException("Unable to update sound with ID " + id + ". Sound not found.");
         }
+        logger.info("Sound with ID {} successfully updated.", id);
         return ResponseEntity.ok(updatedSound);
     }
 
+    @Operation(summary = "Delete a sound by ID", description = "Delete a specific sound by its ID.")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSound(@PathVariable long id) {
+    public ResponseEntity<Void> deleteSound(
+            @Parameter(description = "ID of the sound to delete") @PathVariable long id) {
         soundService.deleteSound(id);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Delete all sounds", description = "Delete all sounds from the database.")
     @DeleteMapping("")
     public ResponseEntity<Void> deleteAll() {
         soundService.deleteSounds();
