@@ -23,10 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+
+
 @RestController
 @RequestMapping("/api/sounds")
 @Tag(name = "Sound API", description = "API for managing sounds")
 public class SoundController {
+
+    private static final String SPECIAL_CHAR_PATTERN = "[\\n\\r\\t]";
 
     private static final Logger logger = LoggerFactory.getLogger(SoundController.class);
 
@@ -36,7 +40,8 @@ public class SoundController {
         this.soundService = soundService;
     }
 
-    @Operation(summary = "Get all sounds", description = "Fetch all available sounds.")
+    @Operation(summary = "Get all sounds",
+               description = "Fetch all available sounds.")
     @GetMapping
     public ResponseEntity<List<SoundDto>> getAllSounds() {
         logger.info("Fetching all sounds...");
@@ -49,7 +54,8 @@ public class SoundController {
         return ResponseEntity.ok(sounds);
     }
 
-    @Operation(summary = "Get sound by ID", description = "Fetch a sound by its ID.")
+    @Operation(summary = "Get sound by ID",
+               description = "Fetch a sound by its ID.")
     @GetMapping("/{id}")
     public ResponseEntity<SoundDto> getSoundById(
             @Parameter(description = "ID of the sound to fetch")
@@ -65,13 +71,14 @@ public class SoundController {
         return ResponseEntity.ok(sound);
     }
 
-    @Operation(summary = "Search sounds by name", description = "Search for sounds by their name.")
+    @Operation(summary = "Search sounds by name",
+               description = "Search for sounds by their name.")
     @GetMapping("/search")
     public ResponseEntity<List<SoundDto>> searchByName(
             @Parameter(description = "Name of the sound to search for")
             @RequestParam(value = "name") String name
     ) {
-        name = name.replaceAll("[\\n\\r\\t]", "_");
+        name = name.replaceAll(SPECIAL_CHAR_PATTERN, "_");
         logger.info("Searching for sounds with name: {}", name);
         List<SoundDto> results = soundService.search(name);
         if (results.isEmpty()) {
@@ -82,36 +89,40 @@ public class SoundController {
         return ResponseEntity.ok(results);
     }
 
-    @Operation(summary = "Get sounds by user name",
-            description = "Fetch all sounds created by a specific user.")
-    @GetMapping("/by-user")
-    public ResponseEntity<List<SoundDto>> getSoundsByUserName(
-            @Parameter(description = "User name associated with the sounds") @RequestParam String userName) {
-        logger.info("Fetching sounds for user: {}", userName);
-        List<SoundDto> results = soundService.getSoundsByUserName(userName);
-        if (results.isEmpty()) {
-            String sanitizedUserName = userName.replaceAll("[\\n\\r\\t]", "_");
-            logger.warn("No sounds found for user '{}'.", sanitizedUserName);
-            throw new SoundNotFoundException("No sounds found for user '" + sanitizedUserName + "'.");
+    @Operation(summary = "Get sounds by creator name",
+               description = "Fetch all sounds created by a some creator.")
+    @GetMapping("/by-creator")
+    public ResponseEntity<List<SoundDto>> getSoundsByCreatorName(
+            @Parameter(description = "Creator name associated with the sounds")
+            @RequestParam String creatorName
+    ) {
+        creatorName = creatorName.replaceAll(SPECIAL_CHAR_PATTERN, "_");
+        logger.info("Fetching sounds from {}", creatorName);
+        List<SoundDto> sounds = soundService.getSoundsByUserName(creatorName);
+        if (sounds.isEmpty()) {
+            logger.warn("No sounds found for user '{}'.", creatorName);
+            throw new SoundNotFoundException("No sounds found from " + creatorName + ".");
         }
-        logger.info("Found {} sounds for user '{}'.", results.size(), userName);
-        return ResponseEntity.ok(results);
+        logger.info("Found {} sounds from {}.", sounds.size(), creatorName);
+        return ResponseEntity.ok(sounds);
     }
 
     @Operation(summary = "Get sounds by album name",
-            description = "Fetch all sounds associated with a specific album.")
+               description = "Fetch all sounds associated with a specific album.")
     @GetMapping("/by-album")
     public ResponseEntity<List<SoundDto>> getSoundsByAlbumName(
             @Parameter(description = "Album name associated with the sounds")
-            @RequestParam String albumName) {
-        logger.info("Fetching sounds for album: {}", albumName);
-        List<SoundDto> results = soundService.getSoundsByAlbumName(albumName);
-        if (results.isEmpty()) {
-            logger.warn("No sounds found for album '{}'.", albumName);
-            throw new SoundNotFoundException("No sounds found for album '" + albumName + "'.");
+            @RequestParam String albumName
+    ) {
+        albumName = albumName.replaceAll(SPECIAL_CHAR_PATTERN, "_");
+        logger.info("Fetching sounds for album {}", albumName);
+        List<SoundDto> sounds = soundService.getSoundsByAlbumName(albumName);
+        if (sounds.isEmpty()) {
+            logger.warn("No sounds found for album {}.", albumName);
+            throw new SoundNotFoundException("No sounds found for album " + albumName + ".");
         }
-        logger.info("Found {} sounds for album '{}'.", results.size(), albumName);
-        return ResponseEntity.ok(results);
+        logger.info("Found {} sounds for album {}.", sounds.size(), albumName);
+        return ResponseEntity.ok(sounds);
     }
 
     @Operation(summary = "Create a new sound",
