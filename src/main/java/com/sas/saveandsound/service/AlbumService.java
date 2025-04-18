@@ -59,6 +59,7 @@ public class AlbumService {
     }
 
     public List<AlbumDto> search(String name) {
+        name = name.replaceAll("\\s+", " ").trim();
         logger.info("Searching for albums with name: {}", name);
         List<Album> albums = albumRepository.findByName(name);
         if (albums == null || albums.isEmpty()) {

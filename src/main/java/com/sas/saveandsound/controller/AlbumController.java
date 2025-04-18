@@ -68,6 +68,7 @@ public class AlbumController {
     public ResponseEntity<List<AlbumDto>> searchByName(
             @Parameter(description = "Name of the album to search for")
             @RequestParam(value = "name") String name) {
+        name = name.replaceAll("\\s+", " ").trim();
         logger.info("Searching for albums with name: {}", name);
         List<AlbumDto> albums = albumService.search(name);
         if (albums.isEmpty()) {

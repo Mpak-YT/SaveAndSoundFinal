@@ -27,6 +27,8 @@ import java.util.List;
 @Tag(name = "User API", description = "API for managing users")
 public class UserController {
 
+    private static final String SPECIAL_CHAR_PATTERN = "[\\n\\r\\t]";
+
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
@@ -67,6 +69,7 @@ public class UserController {
     public ResponseEntity<UserDto> searchByName(
             @Parameter(description = "Name of the user to search for")
             @RequestParam(value = "name") String name) {
+        name= name.replaceAll(SPECIAL_CHAR_PATTERN, "_");
         logger.info("Searching for user with name: {}", name);
         UserDto user = userService.search(name);
         if (user == null) {
