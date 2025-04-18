@@ -38,21 +38,18 @@ public class User {
     @JsonManagedReference
     private Set<Sound> sounds = new HashSet<>();
 
-    @Column(name = "email", columnDefinition = "text", nullable = false)
+    @Column(name = "email", columnDefinition = "text")
     private String email;
 
     @Column(name = "nickname", columnDefinition = "text", nullable = false)
     private String nickname;
 
-    public User() {}
-
-    public User(String name, boolean role) {
-        this.name = name;
-        this.role = role;
-    }
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

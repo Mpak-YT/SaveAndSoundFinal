@@ -17,16 +17,58 @@ java {
 repositories {
     mavenCentral()
 }
-
+/*
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+    //implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    //implementation 'org.springframework.boot:spring-boot-starter-validation'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.mockito:mockito-core:4.11.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
+    //implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    //annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    //implementation 'org.springframework.boot:spring-boot-starter-aop'
+    //testImplementation 'com.h2database:h2'
+
+}*/
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // Consider using the latest stable version if 3.4.3 is not stable
+    // implementation 'org.springframework.boot:spring-boot-starter-web' // Use version managed by Spring Boot BOM
+
+    // Use the latest stable version unless you specifically need 2.8.5
+    // implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0' // Example stable version
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5' // Keep if needed
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // --- Testing Dependencies ---
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // REMOVE explicit Mockito version - let Spring Boot manage it
+    // testImplementation 'org.mockito:mockito-core:4.11.0'
+    // REMOVE explicit JUnit Jupiter version - let Spring Boot manage it
+    // testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+
+    // This is often not needed explicitly when using spring-boot-starter-test
+    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Uncomment if you decide to use MapStruct
+    // implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    // annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
 }
+
+
+test {
+    useJUnitPlatform()
+}
+
+bootRun.dependsOn(checkstyleMain)
+bootJar.dependsOn(checkstyleMain)

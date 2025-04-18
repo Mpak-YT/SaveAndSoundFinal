@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,10 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
-
-
+@Validated
 @RestController
 @RequestMapping("/api/sounds")
 @Tag(name = "Sound API", description = "API for managing sounds")
@@ -125,32 +124,37 @@ public class SoundController {
         return ResponseEntity.ok(sounds);
     }
 
-    @Operation(summary = "Create a new sound",
-            description = "Add a new sound with the provided details.")
+    @Operation(summary = "Create a new sounds",
+            description = "Add new sounds with the provided details.")
     @PostMapping("/add")
-    public ResponseEntity<SoundDto> createSound(
-            @Valid @RequestBody Map<String, Object> soundData) {
-        logger.info("Creating a new sound with data: {}", soundData);
-        SoundDto createdSound = soundService.createSound(soundData);
-        logger.info("Sound successfully created with ID: {}", createdSound.getId());
-        return ResponseEntity.ok(createdSound);
+    public ResponseEntity<List<SoundDto>> createSound(
+            @Valid @RequestBody List<SoundDto> soundsDto
+    ) {
+        logger.info("Creating a new sounds.");
+        List<SoundDto> createdSounds = soundsDto.stream()
+                .map(soundService::createSound) // Обработка каждого элемента
+                .toList();
+        logger.info("Sounds successfully created. Total count: {}", createdSounds.size());
+        return ResponseEntity.ok(createdSounds);
     }
 
-    @Operation(summary = "Update a sound",
-            description = "Update an existing sound by its ID.")
+    @Operation(summary = "Update sound by ID",
+            description = "Update the details of a specific sound by its ID.")
     @PutMapping("/{id}")
     public ResponseEntity<SoundDto> updateSound(
             @Parameter(description = "ID of the sound to update") @PathVariable long id,
-            @RequestBody Map<String, Object> soundData) {
-        logger.info("Updating sound with ID: {} and data: {}", id, soundData);
-        SoundDto updatedSound = soundService.updateSound(id, soundData);
+            @Valid @RequestBody SoundDto soundDto
+    ) {
+        logger.info("Updating sound with ID: {}", id);
+        SoundDto updatedSound = soundService.updateSound(id, soundDto);
         if (updatedSound == null) {
             logger.error("Failed to update sound with ID {}. Sound not found.", id);
-            throw new SoundNotFoundException("Unable to update sound with ID " + id + ". Sound not found.");
+            return ResponseEntity.notFound().build();
         }
         logger.info("Sound with ID {} successfully updated.", id);
         return ResponseEntity.ok(updatedSound);
     }
+
 
     @Operation(summary = "Delete a sound by ID", description = "Delete a specific sound by its ID.")
     @DeleteMapping("/{id}")

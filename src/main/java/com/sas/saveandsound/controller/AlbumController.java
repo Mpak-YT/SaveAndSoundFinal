@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/albums")
@@ -37,68 +36,65 @@ public class AlbumController {
         this.albumService = albumService;
     }
 
-    @Operation(summary = "Get all albums", description = "Fetch a list of all available albums.")
+    @Operation(summary = "Get all albums", description = "Fetch all available albums.")
     @GetMapping
     public ResponseEntity<List<AlbumNameDto>> getAllAlbums() {
         logger.info("Fetching all albums...");
-        List<AlbumNameDto> results = albumService.getAllAlbums();
-        if (results.isEmpty()) {
+        List<AlbumNameDto> albums = albumService.getAllAlbums();
+        if (albums.isEmpty()) {
             logger.warn("No albums found.");
             throw new AlbumNotFoundException("No albums found.");
         }
-        logger.info("Found {} albums.", results.size());
-        return ResponseEntity.ok(results);
+        logger.info("Found {} albums.", albums.size());
+        return ResponseEntity.ok(albums);
     }
 
-    @Operation(summary = "Get album by ID", description = "Fetch a specific album by its ID.")
+    @Operation(summary = "Get album by ID", description = "Fetch an album by its ID.")
     @GetMapping("/{id}")
     public ResponseEntity<AlbumDto> getAlbumById(
             @Parameter(description = "ID of the album to fetch") @PathVariable long id) {
         logger.info("Fetching album with ID: {}", id);
-        AlbumDto result = albumService.search(id);
-        if (result == null) {
+        AlbumDto album = albumService.search(id);
+        if (album == null) {
             logger.error("Album with ID {} not found.", id);
             throw new AlbumNotFoundException("Album with ID " + id + " not found.");
         }
-        logger.info("Album with ID {} successfully retrieved.", id);
-        return ResponseEntity.ok(result);
+        logger.info("Album with ID {} retrieved successfully.", id);
+        return ResponseEntity.ok(album);
     }
 
-    @Operation(summary = "Search albums by name",
-            description = "Search for albums that match a specific name.")
+    @Operation(summary = "Search albums by name", description = "Search for albums by name.")
     @GetMapping("/search")
     public ResponseEntity<List<AlbumDto>> searchByName(
             @Parameter(description = "Name of the album to search for")
             @RequestParam(value = "name") String name) {
         logger.info("Searching for albums with name: {}", name);
-        List<AlbumDto> result = albumService.search(name);
-        if (result == null || result.isEmpty()) {
+        List<AlbumDto> albums = albumService.search(name);
+        if (albums.isEmpty()) {
             logger.warn("No albums found with the name '{}'.", name);
             throw new AlbumNotFoundException("No albums found with the name '" + name + "'.");
         }
-        logger.info("Found {} albums with the name '{}'.", result.size(), name);
-        return ResponseEntity.ok(result);
+        logger.info("Found {} albums with the name '{}'.", albums.size(), name);
+        return ResponseEntity.ok(albums);
     }
 
-    @Operation(summary = "Create a new album",
-            description = "Add a new album with the provided details.")
+    @Operation(summary = "Create a new album", description = "Add a new album with the provided details.")
     @PostMapping("/add")
     public ResponseEntity<AlbumDto> createAlbum(
-            @Valid @RequestBody Map<String, Object> albumData) {
-        logger.info("Creating a new album with data: {}", albumData);
-        AlbumDto createdAlbum = albumService.createAlbum(albumData);
+            @Valid @RequestBody AlbumDto albumDto) {
+        logger.info("Creating a new album with data: {}", albumDto);
+        AlbumDto createdAlbum = albumService.createAlbum(albumDto);
         logger.info("Album successfully created with ID: {}", createdAlbum.getId());
         return ResponseEntity.ok(createdAlbum);
     }
 
-    @Operation(summary = "Update an album",
-            description = "Update the details of an existing album by its ID.")
+    @Operation(summary = "Update an album", description = "Update an existing album by its ID.")
     @PutMapping("/{id}")
     public ResponseEntity<AlbumDto> updateAlbum(
             @Parameter(description = "ID of the album to update") @PathVariable long id,
-            @RequestBody Map<String, Object> albumData) {
-        logger.info("Updating album with ID: {} and data: {}", id, albumData);
-        AlbumDto updatedAlbum = albumService.updateAlbum(id, albumData);
+            @RequestBody AlbumDto albumDto) {
+        logger.info("Updating album with ID: {} and data: {}", id, albumDto);
+        AlbumDto updatedAlbum = albumService.updateAlbum(id, albumDto);
         if (updatedAlbum == null) {
             logger.error("Failed to update album with ID {}. Album not found.", id);
             throw new AlbumNotFoundException("Unable to update album with ID " + id + ". Album not found.");
@@ -111,14 +107,19 @@ public class AlbumController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAlbum(
             @Parameter(description = "ID of the album to delete") @PathVariable long id) {
+        logger.info("Deleting album with ID: {}", id);
         albumService.deleteAlbum(id);
+        logger.info("Album with ID {} deleted successfully.", id);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Delete all albums", description = "Delete all albums from the database.")
     @DeleteMapping("")
     public ResponseEntity<Void> deleteAllAlbums() {
+        logger.info("Deleting all albums...");
         albumService.deleteAllAlbums();
+        logger.info("All albums deleted successfully.");
         return ResponseEntity.noContent().build();
     }
 }
+
