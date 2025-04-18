@@ -2,33 +2,40 @@ package com.sas.saveandsound.service;
 
 import com.sas.saveandsound.cashe.SoundCache;
 import com.sas.saveandsound.dto.SoundDto;
+import com.sas.saveandsound.dto.UserDto;
 import com.sas.saveandsound.exception.SoundNotFoundException;
 import com.sas.saveandsound.mapper.SoundMapper;
 import com.sas.saveandsound.model.Album;
 import com.sas.saveandsound.model.Sound;
+import com.sas.saveandsound.model.User;
 import com.sas.saveandsound.repository.AlbumRepository;
 import com.sas.saveandsound.repository.SoundRepository;
+import com.sas.saveandsound.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SoundService {
 
     private final SoundRepository soundRepository;
     private final AlbumRepository albumRepository;
+    private final UserRepository userRepository;
     private final SoundCache soundCache; // Используем SoundCache вместо Map
     private static final Logger logger = LoggerFactory.getLogger(SoundService.class);
 
     public SoundService(SoundRepository soundRepository,
-                        AlbumRepository albumRepository,
+                        AlbumRepository albumRepository, UserRepository userRepository,
                         SoundCache soundCache) {
         this.soundRepository = soundRepository;
         this.albumRepository = albumRepository;
+        this.userRepository = userRepository;
         this.soundCache = soundCache;
     }
 
@@ -112,6 +119,20 @@ public class SoundService {
         logger.info("Creating a new sound: {}", soundDto.getName());
         Sound newSound = mapSoundFields(new Sound(), soundDto);
 
+        // Обработка creators
+        if (soundDto.getCreators() != null && !soundDto.getCreators().isEmpty()) {
+            Set<User> creators = new HashSet<>();
+            for (UserDto creatorDto : soundDto.getCreators()) {
+                User creator = userRepository.findById(creatorDto.getId());
+                if (creator == null) {
+                    throw new IllegalArgumentException("Creator with ID " + creatorDto.getId() +
+                            " not found");
+                }
+                creators.add(creator);
+            }
+            newSound.setCreators(creators);
+        }
+
         if (newSound.getAlbum() != null && newSound.getAlbum().getId() == null) {
             logger.info("Saving new album for sound.");
             Album savedAlbum = albumRepository.save(newSound.getAlbum());
@@ -133,7 +154,20 @@ public class SoundService {
         }
 
         Sound updatedSound = mapSoundFields(existingSound, soundDto);
-        logger.info("Fields updated for sound with ID: {}", id);
+
+        // Обработка creators
+        if (soundDto.getCreators() != null && !soundDto.getCreators().isEmpty()) {
+            Set<User> creators = new HashSet<>();
+            for (UserDto creatorDto : soundDto.getCreators()) {
+                User creator = userRepository.findById(creatorDto.getId());
+                if (creator == null) {
+                    throw new IllegalArgumentException("Creator with ID " + creatorDto.getId() +
+                            " not found");
+                }
+                creators.add(creator);
+            }
+            updatedSound.setCreators(creators);
+        }
 
         if (updatedSound.getAlbum() != null && updatedSound.getAlbum().getId() == null) {
             logger.info("Saving new album for updated sound.");
@@ -145,6 +179,8 @@ public class SoundService {
         logger.info("Sound updated successfully with ID: {}", id);
         return SoundMapper.toDto(savedUpdatedSound);
     }
+
+
 
     public void deleteSound(long soundId) {
         logger.info("Deleting sound with ID: {}", soundId);

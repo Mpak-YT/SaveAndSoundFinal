@@ -186,7 +186,8 @@ public class UserService {
     private void processSoundsForCreator(User user, UserDto userDto) {
         if (user.getRole() && userDto instanceof CreatorDto creatorDto) {
             if (creatorDto.getSounds() == null) {
-                logger.warn("Received CreatorDto with null sounds list for user ID {}. Existing sounds remain unchanged.", user.getId());
+                logger.warn("Received CreatorDto with null sounds list for user ID {}." +
+                        " Existing sounds remain unchanged.", user.getId());
                 return;
             }
 
