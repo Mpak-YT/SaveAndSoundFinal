@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*; // Используем статический импорт Mockito
+import static org.mockito.Mockito.*; // Используем статический импорт
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Тесты для UserService (v7 - Полная версия, БЕЗ Optional в моках)")
