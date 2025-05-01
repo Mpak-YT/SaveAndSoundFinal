@@ -3,14 +3,12 @@ package com.sas.saveandsound.service;
 import com.sas.saveandsound.dto.CreatorDto;
 import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.dto.UserDto;
-import com.sas.saveandsound.exception.SoundNotFoundException;
 import com.sas.saveandsound.exception.UserNotFoundException;
 // Убедитесь, что мапперы существуют и доступны
 import com.sas.saveandsound.mapper.SoundMapper;
 import com.sas.saveandsound.mapper.UserMapper;
 import com.sas.saveandsound.model.Sound;
 import com.sas.saveandsound.model.User;
-import com.sas.saveandsound.repository.SoundRepository;
 import com.sas.saveandsound.repository.UserRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +40,6 @@ class UserServiceTest { // Изменено имя класса
     // --- КОНЕЦ ЗАМЕЧАНИЯ ---
 
     @Mock private UserRepository userRepository;
-    @Mock private SoundRepository soundRepository;
     @Mock private SoundService soundService;
     // @Mock private SoundMapper soundMapper; // Если бин
 
@@ -561,45 +558,6 @@ class UserServiceTest { // Изменено имя класса
             assertThrows(UserNotFoundException.class, () -> userService.updateUser(99L, updateDto));
             verify(userRepository).findById(99L);
             verify(userRepository, never()).save(any());
-        }
-    }
-
-    // ==================== REMOVE CREATOR AND HANDLE SOUND (!!! НЕКОРРЕКТНЫЕ МОКИ !!!) ====================
-    @Nested @DisplayName("removeCreatorAndDeleteOrphanSound (!!! ОШИБОЧНЫЕ МОКИ Entity/null)")
-    @Disabled("Тесты не соответствуют коду сервиса, использующему Optional")
-    class RemoveCreatorTestsExpectingEntityOrNull_DISABLED {
-        private Sound soundForTest; private User creatorToRemove; private User otherCreator;
-        @BeforeEach void setupRemoveTests() {
-            creatorToRemove = new User(); creatorToRemove.setId(3L);
-            otherCreator = new User(); otherCreator.setId(5L);
-            soundForTest = new Sound(); soundForTest.setId(10L);
-        }
-        @Test @DisplayName("Тест упадет: удаляет создателя, оставляет звук") void shouldRemoveCreator_KeepSound_WhenOthersExist_WillFail() {
-            soundForTest.setCreators(new HashSet<>(Set.of(creatorToRemove, otherCreator)));
-            when(soundRepository.findById(10L)).thenReturn(soundForTest); // НЕ Optional
-            when(userRepository.findById(3L)).thenReturn(creatorToRemove); // НЕ Optional
-            when(soundRepository.save(any(Sound.class))).thenReturn(soundForTest);
-            assertThrows(Exception.class, () -> userService.removeCreatorAndDeleteOrphanSound(10L, 3L));
-        }
-        @Test @DisplayName("Тест упадет: удаляет создателя и удаляет звук") void shouldRemoveCreator_AndDeleteOrphanSound_WillFail() {
-            soundForTest.setCreators(new HashSet<>(Set.of(creatorToRemove)));
-            when(soundRepository.findById(10L)).thenReturn(soundForTest); // НЕ Optional
-            when(userRepository.findById(3L)).thenReturn(creatorToRemove); // НЕ Optional
-            doNothing().when(soundRepository).delete(any(Sound.class));
-            assertThrows(Exception.class, () -> userService.removeCreatorAndDeleteOrphanSound(10L, 3L));
-        }
-        @Test @DisplayName("Тест упадет: исключение SoundNotFound") void shouldThrowSoundNotFound_WhenSoundMissing_WillFail() {
-            when(soundRepository.findById(99L)).thenReturn(null); // НЕ Optional
-            assertThrows(SoundNotFoundException.class, () -> userService.removeCreatorAndDeleteOrphanSound(99L, 3L));
-            verify(soundRepository).findById(99L);
-        }
-        @Test @DisplayName("Тест упадет: исключение UserNotFound") void shouldThrowUserNotFound_WhenCreatorMissing_WillFail() {
-            soundForTest = new Sound(); soundForTest.setId(10L); // Инициализация soundForTest
-            when(soundRepository.findById(10L)).thenReturn(soundForTest); // НЕ Optional
-            when(userRepository.findById(99L)).thenReturn(null); // НЕ Optional
-            assertThrows(UserNotFoundException.class, () -> userService.removeCreatorAndDeleteOrphanSound(10L, 99L));
-            verify(soundRepository).findById(10L);
-            verify(userRepository).findById(99L);
         }
     }
 

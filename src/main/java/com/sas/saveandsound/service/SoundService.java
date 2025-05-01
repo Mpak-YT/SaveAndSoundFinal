@@ -121,17 +121,9 @@ public class SoundService {
 
         // Обработка creators
         if (soundDto.getCreators() != null && !soundDto.getCreators().isEmpty()) {
-            Set<User> creators = new HashSet<>();
-            for (UserDto creatorDto : soundDto.getCreators()) {
-                User creator = userRepository.findById(creatorDto.getId());
-                if (creator == null) {
-                    throw new IllegalArgumentException("Creator with ID " + creatorDto.getId() +
-                            " not found");
-                }
-                creators.add(creator);
-            }
-            newSound.setCreators(creators);
+            newSound.setCreators(processCreators(soundDto.getCreators()));
         }
+
 
         if (newSound.getAlbum() != null && newSound.getAlbum().getId() == null) {
             logger.info("Saving new album for sound.");
@@ -157,17 +149,9 @@ public class SoundService {
 
         // Обработка creators
         if (soundDto.getCreators() != null && !soundDto.getCreators().isEmpty()) {
-            Set<User> creators = new HashSet<>();
-            for (UserDto creatorDto : soundDto.getCreators()) {
-                User creator = userRepository.findById(creatorDto.getId());
-                if (creator == null) {
-                    throw new IllegalArgumentException("Creator with ID " + creatorDto.getId() +
-                            " not found");
-                }
-                creators.add(creator);
-            }
-            updatedSound.setCreators(creators);
+            updatedSound.setCreators(processCreators(soundDto.getCreators()));
         }
+
 
         if (updatedSound.getAlbum() != null && updatedSound.getAlbum().getId() == null) {
             logger.info("Saving new album for updated sound.");
@@ -199,6 +183,22 @@ public class SoundService {
         soundRepository.deleteAll();
         logger.info("All sounds deleted successfully.");
     }
+
+    private Set<User> processCreators(Set<UserDto> creatorDtos) {
+        Set<User> creators = new HashSet<>();
+        if (creatorDtos != null && !creatorDtos.isEmpty()) {
+            for (UserDto creatorDto : creatorDtos) {
+                User creator = userRepository.findById(creatorDto.getId());
+                if (creator == null) {
+                    throw new IllegalArgumentException("Creator with ID " +
+                            creatorDto.getId() + " not found");
+                }
+                creators.add(creator);
+            }
+        }
+        return creators;
+    }
+
 
     private Sound mapSoundFields(Sound sound, SoundDto soundDto) {
         setSoundName(sound, soundDto);

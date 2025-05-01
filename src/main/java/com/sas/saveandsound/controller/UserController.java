@@ -3,6 +3,7 @@ package com.sas.saveandsound.controller;
 import com.sas.saveandsound.dto.UserDto;
 import com.sas.saveandsound.exception.UserNotFoundException;
 import com.sas.saveandsound.service.UserService;
+import com.sas.saveandsound.service.VisitCounterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,15 +33,18 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final VisitCounterService visitCounterService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, VisitCounterService visitCounterService) {
         this.userService = userService;
+        this.visitCounterService = visitCounterService;
     }
 
     @Operation(summary = "Get all users", description = "Fetch all available users.")
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
-        logger.info("Fetching all users...");
+        int visits = visitCounterService.incrementAndGet();
+        logger.info("Fetching all users... Visit count: {}", visits);
         List<UserDto> users = userService.getAllUsers();
         if (users.isEmpty()) {
             logger.warn("No users found.");
@@ -69,7 +73,7 @@ public class UserController {
     public ResponseEntity<UserDto> searchByName(
             @Parameter(description = "Name of the user to search for")
             @RequestParam(value = "name") String name) {
-        name= name.replaceAll(SPECIAL_CHAR_PATTERN, "_");
+        name = name.replaceAll(SPECIAL_CHAR_PATTERN, "_");
         logger.info("Searching for user with name: {}", name);
         UserDto user = userService.search(name);
         if (user == null) {
@@ -125,5 +129,11 @@ public class UserController {
         logger.info("All users deleted successfully.");
         return ResponseEntity.noContent().build();
     }
-}
 
+    @Operation(summary = "Get visit count",
+            description = "Retrieves the number of visits to the getAllUsers endpoint.")
+    @GetMapping("/visits")
+    public ResponseEntity<Integer> getVisitCount() {
+        return ResponseEntity.ok(visitCounterService.getVisitCount());
+    }
+}

@@ -2,19 +2,21 @@ package com.sas.saveandsound.service;
 
 import com.sas.saveandsound.cashe.SoundCache;
 import com.sas.saveandsound.dto.SoundDto;
+import com.sas.saveandsound.dto.UserDto;
 import com.sas.saveandsound.exception.SoundNotFoundException;
 import com.sas.saveandsound.model.Album;
 import com.sas.saveandsound.model.Sound;
 import com.sas.saveandsound.model.User;
 import com.sas.saveandsound.repository.SoundRepository;
+import com.sas.saveandsound.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,6 +32,9 @@ class SoundServiceTest {
 
     @InjectMocks
     private SoundService soundService;
+
+    @Mock // Добавьте эти моки в начало класса, если их еще нет
+    private UserRepository userRepository;
 
     @Test
     void testGetAllSounds_ReturnsSoundDtoList_WhenSoundsExist() {
@@ -356,6 +361,178 @@ class SoundServiceTest {
         verify(soundRepository, times(1)).findSoundsByAlbumNameNative(albumName);
     }
 
+    // ==================== Добавить в SoundServiceTest ====================
 
 
+
+    // --- Тесты для getSoundsByUserName ---
+
+
+    @Test
+    @DisplayName("getSoundsByUserName: обрабатывает спецсимволы в имени")
+    void getSoundsByUserName_HandlesSpecialChars() {
+        // Arrange
+        String userNameWithChars = "User\nWith\tChars";
+        String sanitizedUserName = "User_With_Chars"; // Ожидаемое санитайзером
+        Sound sound = new Sound(); sound.setName("Special Char Sound");
+        List<Sound> sounds = List.of(sound);
+
+        when(soundCache.containsKey(sanitizedUserName)).thenReturn(true); // Попадание в кэш с санитайз. именем
+        when(soundCache.get(sanitizedUserName)).thenReturn(sounds);
+
+        // Act
+        List<SoundDto> result = soundService.getSoundsByUserName(userNameWithChars);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(soundCache).containsKey(sanitizedUserName);
+        verify(soundCache).get(sanitizedUserName);
+        verifyNoInteractions(soundRepository); // Репозиторий не должен вызываться
+    }
+
+
+    // --- Тесты для getSoundsByAlbumName ---
+
+
+    @Test
+    @DisplayName("getSoundsByAlbumName: обрабатывает спецсимволы в имени")
+    void getSoundsByAlbumName_HandlesSpecialChars() {
+        // Arrange
+        String albumNameWithChars = "Album\nWith\tChars";
+        String sanitizedAlbumName = "Album_With_Chars";
+        Sound sound = new Sound(); sound.setName("Special Char Album Sound");
+        List<Sound> sounds = List.of(sound);
+
+        when(soundCache.containsKey(sanitizedAlbumName)).thenReturn(true);
+        when(soundCache.get(sanitizedAlbumName)).thenReturn(sounds);
+
+        // Act
+        List<SoundDto> result = soundService.getSoundsByAlbumName(albumNameWithChars);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(soundCache).containsKey(sanitizedAlbumName);
+        verify(soundCache).get(sanitizedAlbumName);
+        verifyNoInteractions(soundRepository);
+    }
+
+
+    // --- Тесты для createSound ---
+
+
+    @Test
+    @DisplayName("createSound: выбрасывает исключение, если создатель не найден")
+    void createSound_Throws_WhenCreatorNotFound() {
+        // Arrange
+        UserDto nonExistentCreatorDto = new UserDto(); nonExistentCreatorDto.setId(99L); // Несуществующий ID
+        SoundDto inputDto = new SoundDto();
+        inputDto.setName("Sound With Bad Creator");
+        inputDto.setCreators(Set.of(nonExistentCreatorDto));
+
+        // Мокируем userRepository, чтобы он вернул null
+        when(userRepository.findById(99L)).thenReturn(null);
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> soundService.createSound(inputDto));
+        assertTrue(exception.getMessage().contains("Creator with ID 99 not found"));
+
+        verify(userRepository).findById(99L);
+        verify(soundRepository, never()).save(any()); // Сохранение звука не должно быть вызвано
+    }
+
+
+    @Test @DisplayName("createSound: обрабатывает пустой сет создателей")
+    void createSound_HandlesEmptyCreatorSet() {
+        SoundDto inputDto = new SoundDto(); inputDto.setName("NoCreators"); inputDto.setCreators(Collections.emptySet());
+        Sound savedSound = new Sound(); savedSound.setId(15L); savedSound.setName("NoCreators"); savedSound.setCreators(new HashSet<>());
+        when(soundRepository.save(any(Sound.class))).thenReturn(savedSound);
+
+        SoundDto result = soundService.createSound(inputDto);
+
+        assertNotNull(result);
+        assertEquals("NoCreators", result.getName());
+        assertTrue(result.getCreators() == null || result.getCreators().isEmpty()); // Проверяем пустоту
+    }
+
+
+    // --- Тесты для updateSound ---
+
+    @Test
+    @DisplayName("updateSound: выбрасывает исключение, если звук для обновления не найден")
+    void updateSound_Throws_WhenSoundNotFound() {
+        // Arrange
+        SoundDto updateDto = new SoundDto(); updateDto.setName("Update Non Existent");
+        when(soundRepository.findById(99L)).thenReturn(null); // Звук не найден
+
+        // Act & Assert
+        assertThrows(SoundNotFoundException.class, () -> soundService.updateSound(99L, updateDto));
+        verify(soundRepository).findById(99L);
+        verify(soundRepository, never()).save(any());
+    }
+
+
+    @Test
+    @DisplayName("updateSound: выбрасывает исключение при попытке установить несуществующего создателя")
+    void updateSound_Throws_WhenCreatorNotFound() {
+        // Arrange
+        UserDto nonExistentCreatorDto = new UserDto(); nonExistentCreatorDto.setId(99L);
+        SoundDto updateDto = new SoundDto(); updateDto.setName("Sound With Bad Creator Update");
+        updateDto.setCreators(Set.of(nonExistentCreatorDto)); // Пытаемся установить несуществующего создателя
+
+        Sound existingSound = new Sound(); existingSound.setId(1L); existingSound.setName("Old Sound");
+
+        when(soundRepository.findById(1L)).thenReturn(existingSound); // Звук для обновления найден
+        // Мокируем поиск создателя, возвращаем null
+        when(userRepository.findById(99L)).thenReturn(null);
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> soundService.updateSound(1L, updateDto));
+        assertTrue(exception.getMessage().contains("Creator with ID 99 not found"));
+
+        verify(soundRepository).findById(1L);
+        verify(userRepository).findById(99L);
+        verify(soundRepository, never()).save(any());
+    }
+
+
+
+    @Test
+    @DisplayName("updateSound: выбрасывает исключение, если имя звука null или пустое")
+    void updateSound_Throws_WhenNameIsNullOrEmpty() {
+        SoundDto updateDtoWithNull = new SoundDto(); updateDtoWithNull.setName(null);
+        SoundDto updateDtoWithEmpty = new SoundDto(); updateDtoWithEmpty.setName("   ");
+        Sound existingSound = new Sound(); existingSound.setId(1L);
+
+        when(soundRepository.findById(1L)).thenReturn(existingSound);
+
+        IllegalArgumentException exNull = assertThrows(IllegalArgumentException.class, () -> soundService.updateSound(1L, updateDtoWithNull));
+        assertEquals("Sound name cannot be null, empty, or contain only spaces", exNull.getMessage());
+
+        IllegalArgumentException exEmpty = assertThrows(IllegalArgumentException.class, () -> soundService.updateSound(1L, updateDtoWithEmpty));
+        assertEquals("Sound name cannot be null, empty, or contain only spaces", exEmpty.getMessage());
+
+        verify(soundRepository, times(2)).findById(1L); // Вызывался дважды
+        verify(soundRepository, never()).save(any());
+    }
+
+
+    // --- Тесты для deleteSound ---
+
+    @Test
+    @DisplayName("deleteSound: выбрасывает исключение, если звук не найден")
+    void deleteSound_Throws_WhenNotFound() {
+        when(soundRepository.findById(99L)).thenReturn(null); // Звук не найден
+        assertThrows(SoundNotFoundException.class, () -> soundService.deleteSound(99L));
+        verify(soundRepository).findById(99L);
+        verify(soundRepository, never()).delete(any());
+    }
+
+
+    // --- Дополнительные тесты для покрытия ---
 }
+
+
