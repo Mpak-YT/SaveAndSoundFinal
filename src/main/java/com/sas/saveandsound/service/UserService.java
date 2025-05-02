@@ -141,8 +141,8 @@ public class UserService {
             } else {
                 logger.warn("SoundService.createSound returned null DTO for: {}", soundDto.getName());
             }
-        } catch (Exception e) {
-            logger.error("Error creating sound DTO: {}", soundDto, e);
+        } catch (Exception exception) {
+            logger.error("Error creating sound DTO: {}", soundDto, exception);
         }
         return sound;
     }
@@ -231,8 +231,8 @@ public class UserService {
                 logger.error("Sound entity is null after mapping result DTO: {}. Skipping sound.", resultDto);
             }
             return sound;
-        } catch (Exception e) {
-            logger.error("Error processing sound DTO during update: {}", soundDto, e);
+        } catch (Exception exception) {
+            logger.error("Error processing sound DTO during update: {}", soundDto, exception);
             return null;
         }
     }
@@ -258,12 +258,12 @@ public class UserService {
                 .map(userDto -> {
                     try {
                         return updateUser(userDto.getId(), userDto);
-                    } catch (UserNotFoundException e) {
+                    } catch (UserNotFoundException exception) {
                         logger.error("User not found during bulk update for ID: {}", userDto.getId());
                         return null; // Возвращаем null при ошибке "не найдено"
-                    } catch (Exception e) {
-                        logger.error("Unexpected error during bulk update for user ID: {}",
-                                userDto.getId(), e);
+                    } catch (Exception exception) {
+                        logger.error("Unexpected exceptionrror during bulk update for user ID: {}",
+                                userDto.getId(), exception);
                         return null; // Возвращаем null при других ошибках
                     }
                 })
