@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LogService {
 
     private static final Logger logger = LoggerFactory.getLogger(LogService.class);
+    private static final String FAIL = "FAILED";
 
     @Value("${logs.directory.path}")
     private String logsDirectoryPath;
 
     private final AtomicInteger logIdGenerator = new AtomicInteger(0);
     private final ConcurrentHashMap<Integer, String> logStatuses = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, String> logDates = new ConcurrentHashMap<>();
 
     private String getFormattedDate(String date) {
         if (date == null || !date.matches("\\d{2}-\\d{2}-\\d{4}")) {
@@ -54,8 +57,7 @@ public class LogService {
 
         FileSystemResource resource = new FileSystemResource(logFile);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=" + logFile.getName())
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + logFile.getName())
                 .body(resource);
     }
 
@@ -78,6 +80,7 @@ public class LogService {
 
         int logId = logIdGenerator.incrementAndGet();
         logStatuses.put(logId, "IN_PROGRESS");
+        logDates.put(logId, formattedDate); // Сохраняем дату для дальнейшего использования
 
         File logFile = new File(logsDirectoryPath, String.format("application-%s.log", formattedDate));
         File mainLogFile = new File(logsDirectoryPath, "application.log");
@@ -89,7 +92,7 @@ public class LogService {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Re-interrupt the thread
                 logger.error("Thread was interrupted during delay", e);
-                logStatuses.put(logId, "FAILED");
+                logStatuses.put(logId, FAIL);
             }
         });
 
@@ -114,27 +117,42 @@ public class LogService {
 
         } catch (IOException e) {
             logger.error("Error filtering log file: {}", e.getMessage(), e);
-            logStatuses.put(logId, "FAILED");
+            logStatuses.put(logId, FAIL);
         }
     }
-
 
     public String getLogCreationStatus(int id) {
         return logStatuses.getOrDefault(id, "NOT_FOUND");
     }
 
-    public synchronized ResponseEntity<InputStreamResource> getLogFileByDateContent(String date) {
-        String formattedDate = getFormattedDate(date);
-        if (formattedDate == null) {
-            return ResponseEntity.badRequest().build();
+    public synchronized ResponseEntity<Object> getLogFileByIdContent(int id) {
+        // Проверяем наличие ID в статусах
+        if (!logStatuses.containsKey(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Log ID not found.");
         }
 
-        File logFile = new File(logsDirectoryPath, "application-" + formattedDate + ".log");
+        String status = logStatuses.get(id);
+        if ("IN_PROGRESS".equals(status)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Log generation is still in progress.");
+        } else if (FAIL.equals(status)) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Log generation failed.");
+        }
+
+        // Получаем дату для формирования имени файла
+        String formattedDate = logDates.get(id);
+        if (formattedDate == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Log file date not found.");
+        }
+
+        // Формируем имя файла по дате
+        File logFile = new File(logsDirectoryPath, String.format("application-%s.log", formattedDate));
 
         if (!logFile.exists() || !logFile.isFile()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Log file not found.");
         }
 
+        // Читаем содержимое файла
         try (BufferedReader reader = new BufferedReader(new FileReader(logFile))) {
             StringBuilder content = new StringBuilder();
             String line;
@@ -150,9 +168,8 @@ public class LogService {
                     .body(resource);
 
         } catch (IOException e) {
-            logger.error("Error reading log file: {}", e.getMessage());
-            return ResponseEntity.internalServerError().build();
+            logger.error("Error reading log file: {}", e.getMessage(), e);
+            return ResponseEntity.internalServerError().body("Error processing log file.");
         }
     }
-
 }

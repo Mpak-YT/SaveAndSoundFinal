@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,9 +48,9 @@ public class LogController {
 
     @Operation(summary = "Get log file by date",
             description = "Retrieves the content of the log file for a specific date.")
-    @GetMapping("/file/{date}")
-    public ResponseEntity<InputStreamResource> getLogFileByDateContent(@PathVariable String date) {
-        return logService.getLogFileByDateContent(date);
+    @GetMapping("/file/{id}")
+    public ResponseEntity<Object> getLogFileByDateContent(@PathVariable int id) {
+        return logService.getLogFileByIdContent(id);
     }
 
     @Operation(summary = "Get log creation status",
