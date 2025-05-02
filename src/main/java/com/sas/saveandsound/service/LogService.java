@@ -70,7 +70,7 @@ public class LogService {
         LocalDate inputDate;
         try {
             inputDate = LocalDate.parse(formattedDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        } catch (DateTimeParseException exception) {
+        } catch (DateTimeParseException _) {
             return ResponseEntity.badRequest().build();
         }
 

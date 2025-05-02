@@ -258,7 +258,7 @@ public class UserService {
                 .map(userDto -> {
                     try {
                         return updateUser(userDto.getId(), userDto);
-                    } catch (UserNotFoundException exception) {
+                    } catch (UserNotFoundException _) {
                         logger.error("User not found during bulk update for ID: {}", userDto.getId());
                         return null; // Возвращаем null при ошибке "не найдено"
                     } catch (Exception exception) {
