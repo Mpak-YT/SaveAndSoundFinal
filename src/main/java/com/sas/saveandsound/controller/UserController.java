@@ -43,7 +43,7 @@ public class UserController {
     @Operation(summary = "Get all users", description = "Fetch all available users.")
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
-        int visits = visitCounterService.incrementAndGet();
+        Integer visits = visitCounterService.incrementAndGet();
         logger.info("Fetching all users... Visit count: {}", visits);
         List<UserDto> users = userService.getAllUsers();
         if (users.isEmpty()) {
@@ -130,10 +130,5 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Get visit count",
-            description = "Retrieves the number of visits to the getAllUsers endpoint.")
-    @GetMapping("/visits")
-    public ResponseEntity<Integer> getVisitCount() {
-        return ResponseEntity.ok(visitCounterService.getVisitCount());
-    }
+
 }
