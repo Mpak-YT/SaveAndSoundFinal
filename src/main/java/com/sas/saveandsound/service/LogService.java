@@ -70,7 +70,7 @@ public class LogService {
         LocalDate inputDate;
         try {
             inputDate = LocalDate.parse(formattedDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException exception) {
             return ResponseEntity.badRequest().build();
         }
 
@@ -89,9 +89,9 @@ public class LogService {
             try {
                 TimeUnit.SECONDS.sleep(10);
                 filterLogFile(mainLogFile, logFile, formattedDate, logId);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt(); // Re-interrupt the thread
-                logger.error("Thread was interrupted during delay", e);
+                logger.error("Thread was interrupted during delay", exception);
                 logStatuses.put(logId, FAIL);
             }
         });
@@ -115,8 +115,8 @@ public class LogService {
             }
             logStatuses.put(logId, "COMPLETED");
 
-        } catch (IOException e) {
-            logger.error("Error filtering log file: {}", e.getMessage(), e);
+        } catch (IOException exception) {
+            logger.error("Error filtering log file: {}", exception.getMessage(), exception);
             logStatuses.put(logId, FAIL);
         }
     }
@@ -167,8 +167,8 @@ public class LogService {
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(resource);
 
-        } catch (IOException e) {
-            logger.error("Error reading log file: {}", e.getMessage(), e);
+        } catch (IOException exception) {
+            logger.error("Error reading log file: {}", exception.getMessage(), exception);
             return ResponseEntity.internalServerError().body("Error processing log file.");
         }
     }
