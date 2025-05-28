@@ -1,161 +1,131 @@
 package com.sas.saveandsound.service;
 
 import com.sas.saveandsound.dto.AlbumDto;
-import com.sas.saveandsound.dto.AlbumNameDto;
 import com.sas.saveandsound.exception.AlbumNotFoundException;
+import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.mapper.AlbumMapper;
-import com.sas.saveandsound.mapper.SoundMapper;
 import com.sas.saveandsound.model.Album;
 import com.sas.saveandsound.model.Sound;
 import com.sas.saveandsound.repository.AlbumRepository;
-import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.sas.saveandsound.repository.SoundRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.HashSet; // Added import
+import com.sas.saveandsound.exception.SoundNotFoundException; // New import
 
 @Service
 public class AlbumService {
 
-    private static final Logger logger = LoggerFactory.getLogger(AlbumService.class);
-
-    private final SoundService soundService;
     private final AlbumRepository albumRepository;
+    private final SoundRepository soundRepository;
+    // Removed SoundMapper and SoundService as they are no longer directly used in AlbumService's updateAlbum logic
 
-    private void logAlbumNotFound(long id) {
-        logger.error("Album not found with ID: {}", id);
-    }
-
-    public AlbumService(SoundService soundService, AlbumRepository albumRepository) {
-        this.soundService = soundService;
+    public AlbumService(AlbumRepository albumRepository, SoundRepository soundRepository) {
         this.albumRepository = albumRepository;
-    }
-
-    public List<AlbumNameDto> getAllAlbums() {
-        logger.info("Fetching all albums...");
-        List<Album> albums = albumRepository.findAll();
-        if (albums.isEmpty()) {
-            logger.warn("No albums found.");
-            throw new AlbumNotFoundException("No albums found.");
-        }
-        logger.info("Found {} albums.", albums.size());
-        return albums.stream()
-                .map(AlbumMapper::toAlbumNameDto)
-                .toList();
+        this.soundRepository = soundRepository;
     }
 
     public AlbumDto search(long id) {
-        logger.info("Fetching album with ID: {}", id);
-        Album album = albumRepository.findById(id);
-        if (album == null) {
-            logAlbumNotFound(id);
-            throw new AlbumNotFoundException("Album with ID " + id + " not found.");
-        }
-        logger.info("Album with ID {} retrieved successfully.", id);
+        Album album = albumRepository.findById(id)
+                                    .orElseThrow(() -> new AlbumNotFoundException("Album with ID " +
+                                            id + " not found."));
         return AlbumMapper.toDto(album);
     }
 
     public List<AlbumDto> search(String name) {
-        name = name.replaceAll("\\s+", " ").trim();
-        logger.info("Searching for albums with name: {}", name);
         List<Album> albums = albumRepository.findByName(name);
         if (albums == null || albums.isEmpty()) {
-            logger.warn("No albums found with the name '{}'.", name);
             throw new AlbumNotFoundException("No albums found with the name '" + name + "'.");
         }
-        logger.info("Found {} albums with the name '{}'.", albums.size(), name);
-        return albums.stream()
-                .map(AlbumMapper::toDto)
-                .toList();
+        return albums.stream().map(AlbumMapper::toDto).toList();
     }
 
-    @Transactional
     public AlbumDto createAlbum(AlbumDto albumDto) {
-        logger.info("Creating a new album with data: {}", albumDto);
-
-        if (albumDto.getName() == null || albumDto.getName().trim().isEmpty()) {
-            logger.error("Album name is null or empty.");
-            throw new IllegalArgumentException("Album name cannot be null or empty.");
-        }
-
-        Album newAlbum = AlbumMapper.toEntity(albumDto);
-
-        if (albumDto.getSounds() != null && !albumDto.getSounds().isEmpty()) {
-            Set<Sound> sounds = albumDto.getSounds().stream()
-                    .map(soundDto -> {
-                        Sound sound = SoundMapper.toEntity(soundService.createSound(soundDto));
-                        sound.setAlbum(newAlbum);
-                        return sound;
-                    })
-                    .collect(Collectors.toSet());
-            newAlbum.setSounds(sounds);
-        }
-
-        Album savedAlbum = albumRepository.save(newAlbum);
-        logger.info("Album successfully created with ID: {}", savedAlbum.getId());
-        return AlbumMapper.toDto(savedAlbum);
+        Album album = AlbumMapper.toEntity(albumDto);
+        Album saved = albumRepository.save(album);
+        return AlbumMapper.toDto(saved);
     }
 
-
-    @Transactional
     public AlbumDto updateAlbum(long id, AlbumDto albumDto) {
-        logger.info("Updating album with ID: {}", id);
-        Album existingAlbum = albumRepository.findById(id);
-        if (existingAlbum == null) {
-            logAlbumNotFound(id);
-            throw new AlbumNotFoundException("Unable to update album with ID " + id + ". Album not found.");
-        }
-
-        // Обновляем название, если оно не null
+        Album album = albumRepository.findById(id)
+                                    .orElseThrow(() -> new AlbumNotFoundException("Album not found."));
         if (albumDto.getName() != null) {
-            existingAlbum.setName(albumDto.getName());
+            album.setName(albumDto.getName());
+        }
+        album.setDescription(albumDto.getDescription());
+
+        // Update sounds association
+        if (albumDto.getSounds() != null) {
+            // Create a set of sounds that should be associated with the album based on the DTO
+            Set<Sound> incomingSounds = new HashSet<>();
+            for (SoundDto soundDtoItem : albumDto.getSounds()) {
+                if (soundDtoItem.getId() == null) {
+                    throw new IllegalArgumentException("Cannot add a new sound directly to an album. "
+                        + "Please create the sound first.");
+                }
+                Sound sound = soundRepository.findById(soundDtoItem.getId())
+                    .orElseThrow(() -> new SoundNotFoundException("Sound with ID " + soundDtoItem.getId() +
+                            " not found."));
+                incomingSounds.add(sound);
+            }
+
+            // Handle disassociations: remove sounds from the album's current collection
+            // that are not in the incoming DTO, and set their album to null.
+            // Iterate over a copy to avoid ConcurrentModificationException
+            Set<Sound> soundsToDisassociate = new HashSet<>(album.getSounds());
+            soundsToDisassociate.removeAll(incomingSounds); // These are the sounds to remove
+
+            for (Sound sound : soundsToDisassociate) {
+                sound.setAlbum(null); // Disassociate from this album
+            }
+
+            // Handle associations: add sounds from the incoming DTO to the album's collection
+            // and set their album to this album.
+            // Iterate over a copy to avoid ConcurrentModificationException
+            Set<Sound> soundsToAssociate = new HashSet<>(incomingSounds);
+            soundsToAssociate.removeAll(album.getSounds()); // These are the new sounds to add
+
+            for (Sound sound : soundsToAssociate) {
+                sound.setAlbum(album); // Associate with this album
+            }
+
+            // Finally, update the album's in-memory collection.
+            // This is crucial for Hibernate to detect changes and cascade them.
+            album.getSounds().clear();
+            album.getSounds().addAll(incomingSounds);
         }
 
-        // Обновляем описание, если оно явно указано (включая null)
-        existingAlbum.setDescription(albumDto.getDescription());
+        // Save the album. Due to CascadeType.ALL, changes to the 'sounds' collection
+        // and the 'album' field on associated Sound entities should be persisted.
+        Album savedAlbum = albumRepository.save(album);
 
-        if (albumDto.getSounds() != null && !albumDto.getSounds().isEmpty()) {
-            Set<Sound> updatedSounds = albumDto.getSounds().stream()
-                    .map(soundDto -> {
-                        Sound sound;
-                        if (soundDto.getId() != null) {
-                            sound = SoundMapper.toEntity(soundService
-                                    .updateSound(soundDto.getId(), soundDto));
-                        } else {
-                            sound = SoundMapper.toEntity(soundService.createSound(soundDto));
-                        }
-                        sound.setAlbum(existingAlbum);
-                        return sound;
-                    })
-                    .collect(Collectors.toSet());
-            existingAlbum.setSounds(updatedSounds);
-        }
+        // Explicitly reload the album to ensure its 'sounds' collection is fresh from the database
+        // This is often necessary for inverse side collections in bidirectional relationships
+        Album reloadedAlbum = albumRepository.findById(savedAlbum.getId())
+                                            .orElseThrow(() -> new AlbumNotFoundException("Album with ID " +
+                                                    savedAlbum.getId() + " not found after update."));
 
-        Album updatedAlbum = albumRepository.save(existingAlbum);
-        logger.info("Album with ID {} successfully updated.", id);
-        return AlbumMapper.toDto(updatedAlbum);
+        return AlbumMapper.toDto(reloadedAlbum); // Use static method call
     }
 
-
-    @Transactional
     public void deleteAlbum(long id) {
-        logger.info("Deleting album with ID: {}", id);
-        Album album = albumRepository.findById(id);
-        if (album == null) {
-            logAlbumNotFound(id);
-            throw new AlbumNotFoundException("Unable to delete album with ID: " + id + ". Album not found.");
+        Album album = albumRepository.findById(id)
+                                    .orElseThrow(() -> new AlbumNotFoundException("Album not found."));
+        for (Sound sound : album.getSounds()) {
+            sound.setAlbum(null);
         }
+        soundRepository.saveAll(album.getSounds());
         albumRepository.delete(album);
-        logger.info("Album with ID {} deleted successfully.", id);
     }
 
-    @Transactional
     public void deleteAllAlbums() {
-        logger.info("Deleting all albums...");
         albumRepository.deleteAll();
-        logger.info("All albums deleted successfully.");
+    }
+
+    public List<AlbumDto> getAllAlbumsDto() {
+        List<Album> albums = albumRepository.findAll();
+        if (albums.isEmpty()) throw new AlbumNotFoundException("No albums found.");
+        return albums.stream().map(AlbumMapper::toDto).toList();
     }
 }

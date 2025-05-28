@@ -84,29 +84,25 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @Operation(summary = "Create new users", description = "Add multiple users with the provided details.")
-    @PostMapping("/add")
-    public ResponseEntity<List<UserDto>> createUsers(
-            @Valid @RequestBody List<UserDto> usersDto) {
-        logger.info("Creating new users...");
-        List<UserDto> createdUsers = usersDto.stream()
-                .map(userService::createUser) // Создание каждого пользователя
-                .toList();
-        logger.info("Successfully created {} users.", createdUsers.size());
-        return ResponseEntity.ok(createdUsers);
+    @Operation(summary = "Create new user", description = "Add a single user with the provided details.")
+    @PostMapping("")
+    public ResponseEntity<UserDto> createUser(
+            @Valid @RequestBody UserDto userDto) {
+        logger.info("Creating new user...");
+        UserDto createdUser = userService.createUser(userDto);
+        logger.info("Successfully created user with id {}", createdUser.getId());
+        return ResponseEntity.ok(createdUser);
     }
 
-    @Operation(summary = "Update multiple users",
-            description = "Update existing users using their IDs and details.")
-    @PutMapping("/bulk")
-    public ResponseEntity<List<UserDto>> updateUsers(
-            @Valid @RequestBody List<UserDto> usersDto) {
-        logger.info("Bulk updating users...");
-        List<UserDto> updatedUsers = usersDto.stream()
-                .map(userDto -> userService.updateUser(userDto.getId(), userDto))
-                .toList();
-        logger.info("Successfully updated {} users.", updatedUsers.size());
-        return ResponseEntity.ok(updatedUsers);
+    @Operation(summary = "Update user by ID", description = "Update an existing user by ID.")
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable long id,
+            @Valid @RequestBody UserDto userDto) {
+        logger.info("Updating user with ID: {}", id);
+        UserDto updatedUser = userService.updateUser(id, userDto);
+        logger.info("Successfully updated user with id {}", updatedUser.getId());
+        return ResponseEntity.ok(updatedUser);
     }
 
     @Operation(summary = "Delete a user by ID",

@@ -1,244 +1,213 @@
 package com.sas.saveandsound.service;
 
-import com.sas.saveandsound.cashe.SoundCache;
 import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.dto.UserDto;
 import com.sas.saveandsound.exception.SoundNotFoundException;
 import com.sas.saveandsound.mapper.SoundMapper;
-import com.sas.saveandsound.model.Album;
 import com.sas.saveandsound.model.Sound;
 import com.sas.saveandsound.model.User;
+import com.sas.saveandsound.model.Album;
 import com.sas.saveandsound.repository.AlbumRepository;
 import com.sas.saveandsound.repository.SoundRepository;
 import com.sas.saveandsound.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.sas.saveandsound.exception.DuplicateSoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import com.sas.saveandsound.exception.AlbumNotFoundException;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.Optional;
 
 @Service
 public class SoundService {
 
     private final SoundRepository soundRepository;
-    private final AlbumRepository albumRepository;
     private final UserRepository userRepository;
-    private final SoundCache soundCache; // Используем SoundCache вместо Map
-    private static final Logger logger = LoggerFactory.getLogger(SoundService.class);
+    private final AlbumRepository albumRepository;
 
-    public SoundService(SoundRepository soundRepository,
-                        AlbumRepository albumRepository, UserRepository userRepository,
-                        SoundCache soundCache) {
+    public SoundService(SoundRepository soundRepository, UserRepository userRepository,
+                        AlbumRepository albumRepository) {
         this.soundRepository = soundRepository;
-        this.albumRepository = albumRepository;
         this.userRepository = userRepository;
-        this.soundCache = soundCache;
+        this.albumRepository = albumRepository;
     }
 
     public List<SoundDto> getAllSounds() {
-        logger.info("Fetching all sounds...");
         List<Sound> sounds = soundRepository.findAll();
-        if (sounds.isEmpty()) {
-            logger.warn("No sounds found.");
-            throw new SoundNotFoundException("No sounds found.");
-        }
-        logger.info("Found {} sounds.", sounds.size());
-        return sounds.stream()
-                .map(SoundMapper::toDto)
-                .toList();
+        if (sounds.isEmpty()) throw new SoundNotFoundException("No sounds found.");
+        return sounds.stream().map(SoundMapper::toDto).toList();
     }
 
     public SoundDto search(long id) {
-        logger.info("Fetching sound with ID: {}", id);
         Sound sound = soundRepository.findById(id);
         if (sound == null) {
-            logger.error("Sound with ID {} not found.", id);
-            throw new SoundNotFoundException("Sound with ID " + id + " not found.");
+            throw new SoundNotFoundException("Sound with ID " + id + " not foun");
         }
-        logger.info("Sound with ID {} retrieved successfully.", id);
-        return SoundMapper.toDto(sound);
+        return SoundMapper.toDto(sound); // Use static method call
     }
 
     public List<SoundDto> search(String name) {
-        logger.info("Searching sounds by name: {}", name);
         List<Sound> sounds = soundRepository.findByName(name);
         if (sounds.isEmpty()) {
-            logger.warn("No sounds found with the name '{}'.", name);
             throw new SoundNotFoundException("No sounds found with the name '" + name + "'.");
         }
-        logger.info("Found {} sounds with the name '{}'.", sounds.size(), name);
         return sounds.stream().map(SoundMapper::toDto).toList();
     }
 
-    public List<SoundDto> getSoundsByUserName(String userName) {
-        logger.info("Fetching sounds by user name: {}", userName);
-        String sanitizedUserName = userName.replaceAll("[\\n\\r\\t]", "_");
-        List<Sound> sounds;
-        if (soundCache.containsKey(sanitizedUserName)) {
-            logger.info("Cache hit: Data found for user '{}'.", sanitizedUserName);
-            sounds = soundCache.get(sanitizedUserName);
-        } else {
-            logger.info("Cache miss: Fetching data from database for user '{}'.", sanitizedUserName);
-            sounds = soundRepository.findSoundsByUserNameJPQL(userName);
-            if (sounds.isEmpty()) {
-                logger.warn("No sounds found for user '{}'.", sanitizedUserName);
-                throw new SoundNotFoundException("No sounds found from " + sanitizedUserName + ".");
-            }
-            soundCache.put(sanitizedUserName, sounds);
-        }
-        logger.info("Found {} sounds for user '{}'.", sounds.size(), sanitizedUserName);
-        return sounds.stream().map(SoundMapper::toDto).toList();
-    }
+    public SoundDto createSound(SoundDto soundDto) {
+        // Check for duplicate sound name within the same album or without an album
+        Optional<Sound> existingSound = soundRepository
+            .findByNameAndAlbumId(soundDto.getName(),
+                soundDto.getAlbum() != null ? soundDto.getAlbum().getId() : null);
 
-    public List<SoundDto> getSoundsByAlbumName(String albumName) {
-        logger.info("Fetching sounds by album name: {}", albumName);
-        String sanitizedAlbumName = albumName.replaceAll("[\\n\\r\\t]", "_");
-        List<Sound> sounds;
-        if (soundCache.containsKey(sanitizedAlbumName)) {
-            logger.info("Cache hit: Data found for album '{}'.", sanitizedAlbumName);
-            sounds = soundCache.get(sanitizedAlbumName);
-        } else {
-            logger.info("Cache miss: Fetching data from database for album '{}'.", sanitizedAlbumName);
-            sounds = soundRepository.findSoundsByAlbumNameNative(albumName);
-            if (sounds.isEmpty()) {
-                logger.warn("No sounds found for album '{}'.", sanitizedAlbumName);
-                throw new SoundNotFoundException("No sounds found for album " + sanitizedAlbumName + ".");
-            }
-            soundCache.put(sanitizedAlbumName, sounds);
+        if (existingSound.isPresent()) {
+            throw new DuplicateSoundException("A sound with the name '"
+                + soundDto.getName() + "' already exists in this album or without an album.");
         }
-        logger.info("Found {} sounds for album '{}'.", sounds.size(), sanitizedAlbumName);
-        return sounds.stream().map(SoundMapper::toDto).toList();
+
+        Sound sound = new Sound();
+        sound.setName(soundDto.getName());
+        sound.setText(soundDto.getText());
+        sound.setDate(soundDto.getDate());
+
+        // Handle album association
+
+        // Handle album association
+        if (soundDto.getAlbum() != null && soundDto.getAlbum().getId() != null) {
+            Album album = albumRepository.findById(soundDto.getAlbum().getId())
+                                        .orElseThrow(() -> new AlbumNotFoundException("Album with ID "
+                                                + soundDto.getAlbum().getId() + " not foun"));
+            sound.setAlbum(album);
+            album.getSounds().add(sound); // ensures both sides are updated
+        }
+
+        // Handle creators
+        if (soundDto.getCreators() != null) {
+            for (UserDto creatorDto : soundDto.getCreators()) {
+                User creator = userRepository.findById(creatorDto.getId()).orElse(null);
+                if (creator == null) throw new IllegalArgumentException("Creator with ID " + creatorDto.getId() +
+                        " not found");
+                sound.getCreators().add(creator);
+                creator.getSounds().add(sound);
+            }
+        }
+
+        Sound savedSound = soundRepository.save(sound);
+        return SoundMapper.toDto(savedSound); // Use static method call
     }
 
     @Transactional
-    public SoundDto createSound(SoundDto soundDto) {
-        logger.info("Creating a new sound: {}", soundDto.getName());
-        Sound newSound = mapSoundFields(new Sound(), soundDto);
+    public SoundDto updateSound(Long id, SoundDto soundDto) {
+        Sound sound = soundRepository.findById(id)
+                .orElseThrow(() -> new SoundNotFoundException("Sound with ID " + id + " not found."));
 
-        // Обработка creators
-        if (soundDto.getCreators() != null && !soundDto.getCreators().isEmpty()) {
-            newSound.setCreators(processCreators(soundDto.getCreators()));
-        }
+        checkDuplicateSound(id, soundDto);
 
+        if (soundDto.getName() != null) sound.setName(soundDto.getName());
+        sound.setText(soundDto.getText());
+        sound.setDate(soundDto.getDate());
 
-        if (newSound.getAlbum() != null && newSound.getAlbum().getId() == null) {
-            logger.info("Saving new album for sound.");
-            Album savedAlbum = albumRepository.save(newSound.getAlbum());
-            newSound.setAlbum(savedAlbum);
-        }
+        Album newAlbum = updateAlbumAssociation(sound, soundDto);
+        sound.setAlbum(newAlbum);
 
-        Sound savedSound = soundRepository.save(newSound);
-        logger.info("Sound created successfully with ID: {}", savedSound.getId());
+        Set<User> updatedCreators = updateCreators(sound, soundDto.getCreators());
+        sound.setCreators(updatedCreators);
+
+        Sound savedSound = soundRepository.save(sound);
         return SoundMapper.toDto(savedSound);
     }
 
-    @Transactional
-    public SoundDto updateSound(long id, SoundDto soundDto) {
-        logger.info("Updating sound with ID: {}", id);
-        Sound existingSound = soundRepository.findById(id);
-        if (existingSound == null) {
-            logger.error("Sound with ID {} not found for update.", id);
-            throw new SoundNotFoundException("Sound with ID " + id + " not found.");
+    // Проверка дубликатов
+    private void checkDuplicateSound(Long id, SoundDto soundDto) {
+        Optional<Sound> existingSound = soundRepository.findByNameAndAlbumId(
+                soundDto.getName(),
+                soundDto.getAlbum() != null ? soundDto.getAlbum().getId() : null
+        );
+
+        if (existingSound.isPresent() && !existingSound.get().getId().equals(id)) {
+            throw new DuplicateSoundException("A sound with the name '" + soundDto.getName() + "' already exists.");
         }
-
-        Sound updatedSound = mapSoundFields(existingSound, soundDto);
-
-        // Обработка creators
-        if (soundDto.getCreators() != null && !soundDto.getCreators().isEmpty()) {
-            updatedSound.setCreators(processCreators(soundDto.getCreators()));
-        }
-
-
-        if (updatedSound.getAlbum() != null && updatedSound.getAlbum().getId() == null) {
-            logger.info("Saving new album for updated sound.");
-            Album savedAlbum = albumRepository.save(updatedSound.getAlbum());
-            updatedSound.setAlbum(savedAlbum);
-        }
-
-        Sound savedUpdatedSound = soundRepository.save(updatedSound);
-        logger.info("Sound updated successfully with ID: {}", id);
-        return SoundMapper.toDto(savedUpdatedSound);
     }
 
+    // Обновление связи с альбомом
+    private Album updateAlbumAssociation(Sound sound, SoundDto soundDto) {
+        Album oldAlbum = sound.getAlbum();
+        Album newAlbum = null;
 
-
-    public void deleteSound(long soundId) {
-        logger.info("Deleting sound with ID: {}", soundId);
-        Sound sound = soundRepository.findById(soundId);
-        if (sound == null) {
-            logger.error("Sound not found with ID: {}", soundId);
-            throw new SoundNotFoundException("Unable to delete sound with ID " +
-                    soundId + ". Sound not found.");
+        if (soundDto.getAlbum() != null && soundDto.getAlbum().getId() != null) {
+            newAlbum = albumRepository.findById(soundDto.getAlbum().getId())
+                    .orElseThrow(() -> new AlbumNotFoundException("Album not found."));
         }
+
+        if (oldAlbum != null && !oldAlbum.equals(newAlbum)) {
+            oldAlbum.getSounds().remove(sound);
+            albumRepository.save(oldAlbum);
+        }
+
+        if (newAlbum != null && !newAlbum.equals(oldAlbum)) {
+            newAlbum.getSounds().add(sound);
+            albumRepository.save(newAlbum);
+        }
+
+        return newAlbum;
+    }
+
+    // Обновление списка авторов
+    private Set<User> updateCreators(Sound sound, Set<UserDto> creatorDtos) {
+        Set<User> updatedCreators = new HashSet<>();
+
+        if (creatorDtos != null) {
+            for (UserDto creatorDto : creatorDtos) {
+                User creator = userRepository.findById(creatorDto.getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Creator not found."));
+                updatedCreators.add(creator);
+            }
+        }
+
+        Set<User> currentCreators = new HashSet<>(sound.getCreators());
+
+        for (User creator : currentCreators) {
+            if (!updatedCreators.contains(creator)) {
+                creator.getSounds().remove(sound);
+                userRepository.save(creator);
+            }
+        }
+
+        for (User creator : updatedCreators) {
+            if (!currentCreators.contains(creator)) {
+                creator.getSounds().add(sound);
+                userRepository.save(creator);
+            }
+        }
+
+        return updatedCreators;
+    }
+
+    public void deleteSound(long id) {
+        Sound sound = soundRepository.findById(id);
+        if (sound == null) throw new SoundNotFoundException("Sound not found.");
         soundRepository.delete(sound);
-        logger.info("Sound deleted successfully with ID: {}", soundId);
     }
 
     public void deleteSounds() {
-        logger.info("Deleting all sounds...");
         soundRepository.deleteAll();
-        logger.info("All sounds deleted successfully.");
     }
 
-    private Set<User> processCreators(Set<UserDto> creatorDtos) {
-        Set<User> creators = new HashSet<>();
-        if (creatorDtos != null && !creatorDtos.isEmpty()) {
-            for (UserDto creatorDto : creatorDtos) {
-                User creator = userRepository.findById(creatorDto.getId());
-                if (creator == null) {
-                    throw new IllegalArgumentException("Creator with ID " +
-                            creatorDto.getId() + " not found");
-                }
-                creators.add(creator);
-            }
+    public List<SoundDto> getSoundsByAlbumName(String albumName) {
+        List<Sound> sounds = soundRepository.findSoundsByAlbumNameNative(albumName);
+        if (sounds == null || sounds.isEmpty()) {
+            throw new SoundNotFoundException("No sounds found for album " + albumName + ".");
         }
-        return creators;
+        return sounds.stream().map(SoundMapper::toDto).toList(); // Use static method call
     }
 
-
-    private Sound mapSoundFields(Sound sound, SoundDto soundDto) {
-        setSoundName(sound, soundDto);
-        sound.setText(soundDto.getText());
-        sound.setDate(soundDto.getDate());
-        sound.setAlbum(processAlbum(soundDto));
-        return sound;
-    }
-
-    private void setSoundName(Sound sound, SoundDto soundDto) {
-        if (soundDto.getName() != null && !soundDto.getName().trim().isEmpty()) {
-            sound.setName(soundDto.getName());
-        } else {
-            throw new IllegalArgumentException("Sound name cannot be null, empty, or contain only spaces");
+    public List<SoundDto> getSoundsByUserName(String userName) {
+        List<Sound> sounds = soundRepository.findSoundsByUserNameJPQL(userName);
+        if (sounds == null || sounds.isEmpty()) {
+            throw new SoundNotFoundException("No sounds found from " + userName + ".");
         }
+        return sounds.stream().map(SoundMapper::toDto).toList(); // Use static method call
     }
-
-    private Album processAlbum(SoundDto soundDto) {
-        if (soundDto.getAlbum() == null) {
-            return null; // Если альбом не передан, устанавливаем null
-        }
-
-        if (soundDto.getAlbum().getId() == null) {
-            logger.warn("Album ID is null in SoundDto. Setting album to null.");
-            return null; // Если ID равен null, устанавливаем null
-        }
-
-        return findAlbumById(soundDto.getAlbum().getId());
-    }
-
-    private Album findAlbumById(Long albumId) {
-        Optional<Album> optionalAlbum = albumRepository.findById(albumId);
-        if (optionalAlbum.isPresent()) {
-            return optionalAlbum.get();
-        } else {
-            throw new IllegalArgumentException("Album with ID " + albumId + " does not exist");
-        }
-    }
-
-
-
-
 }

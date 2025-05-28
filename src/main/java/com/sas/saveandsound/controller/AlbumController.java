@@ -1,7 +1,6 @@
 package com.sas.saveandsound.controller;
 
 import com.sas.saveandsound.dto.AlbumDto;
-import com.sas.saveandsound.dto.AlbumNameDto;
 import com.sas.saveandsound.exception.AlbumNotFoundException;
 import com.sas.saveandsound.service.AlbumService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,11 +35,11 @@ public class AlbumController {
         this.albumService = albumService;
     }
 
-    @Operation(summary = "Get all albums", description = "Fetch all available albums.")
+    @Operation(summary = "Get all albums", description = "Fetch all available albums with full info.")
     @GetMapping
-    public ResponseEntity<List<AlbumNameDto>> getAllAlbums() {
-        logger.info("Fetching all albums...");
-        List<AlbumNameDto> albums = albumService.getAllAlbums();
+    public ResponseEntity<List<AlbumDto>> getAllAlbums() {
+        logger.info("Fetching all albums (AlbumDto)...");
+        List<AlbumDto> albums = albumService.getAllAlbumsDto();
         if (albums.isEmpty()) {
             logger.warn("No albums found.");
             throw new AlbumNotFoundException("No albums found.");

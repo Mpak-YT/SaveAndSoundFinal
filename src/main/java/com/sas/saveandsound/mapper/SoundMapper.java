@@ -2,66 +2,37 @@ package com.sas.saveandsound.mapper;
 
 import com.sas.saveandsound.dto.SoundDto;
 import com.sas.saveandsound.model.Sound;
+import com.sas.saveandsound.dto.AlbumNameDto;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 import java.util.stream.Collectors;
+import java.util.HashSet;
 
 @Component
 public class SoundMapper {
 
-    // Приватный конструктор для предотвращения создания экземпляра
-    private SoundMapper() {}
+    private SoundMapper() {} // Private constructor for static utility class
 
-    // Преобразование из сущности Sound в DTO
     public static SoundDto toDto(Sound sound) {
-        if (sound == null) {
-            return null; // Возвращаем null, если объект Sound отсутствует
-        }
+        if (sound == null) return null;
         SoundDto dto = new SoundDto();
-        dto.setId(sound.getId()); // Устанавливаем ID
-        dto.setName(sound.getName()); // Устанавливаем имя
-
-        // Безопасная обработка поля Creators (null -> пустой набор)
-        dto.setCreators(sound.getCreators() == null
-                ? null // Устанавливаем null, если creators отсутствуют
-                : sound.getCreators().stream()
-                .map(UserMapper::toDto)
-                .collect(Collectors.toSet()));
-
-
-        // Безопасная обработка поля Album
-        dto.setAlbum(sound.getAlbum() == null ? null : AlbumMapper.toAlbumNameDto(sound.getAlbum()));
-
-        // Устанавливаем остальные поля
-        dto.setDate(sound.getDate());
+        dto.setId(sound.getId());
+        dto.setName(sound.getName());
         dto.setText(sound.getText());
-
+        dto.setDate(sound.getDate());
+        if (sound.getCreators() != null) {
+            dto.setCreators(sound.getCreators().stream()
+                                 .map(UserMapper::toDto) // Use static method call
+                                 .collect(Collectors.toSet()));
+        } else {
+            dto.setCreators(new HashSet<>());
+        }
+        if (sound.getAlbum() != null) {
+            AlbumNameDto albumNameDto = new AlbumNameDto();
+            albumNameDto.setId(sound.getAlbum().getId());
+            albumNameDto.setName(sound.getAlbum().getName());
+            dto.setAlbum(albumNameDto);
+        }
         return dto;
     }
 
-    // Преобразование из DTO в сущность Sound
-    public static Sound toEntity(SoundDto dto) {
-        if (dto == null) {
-            return null; // Возвращаем null, если объект SoundDto отсутствует
-        }
-        Sound sound = new Sound();
-        sound.setName(dto.getName()); // Устанавливаем имя
-
-        // Безопасная обработка поля Creators (null -> пустой набор)
-        sound.setCreators(dto.getCreators() == null
-                ? Collections.emptySet()
-                : dto.getCreators().stream()
-                .map(UserMapper::toEntity)
-                .collect(Collectors.toSet()));
-
-        // Безопасная обработка поля Album
-        sound.setAlbum(dto.getAlbum() == null ? null : AlbumMapper.toEntity(dto.getAlbum()));
-
-        // Устанавливаем остальные поля
-        sound.setDate(dto.getDate());
-        sound.setText(dto.getText());
-
-        return sound;
-    }
 }

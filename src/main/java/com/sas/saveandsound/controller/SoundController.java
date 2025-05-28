@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus; // New import
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus; // New import
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -40,7 +42,7 @@ public class SoundController {
     }
 
     @Operation(summary = "Get all sounds",
-               description = "Fetch all available sounds.")
+        description = "Fetch all available sounds.")
     @GetMapping
     public ResponseEntity<List<SoundDto>> getAllSounds() {
         logger.info("Fetching all sounds...");
@@ -54,7 +56,7 @@ public class SoundController {
     }
 
     @Operation(summary = "Get sound by ID",
-               description = "Fetch a sound by its ID.")
+        description = "Fetch a sound by its ID.")
     @GetMapping("/{id}")
     public ResponseEntity<SoundDto> getSoundById(
             @Parameter(description = "ID of the sound to fetch")
@@ -71,7 +73,7 @@ public class SoundController {
     }
 
     @Operation(summary = "Search sounds by name",
-               description = "Search for sounds by their name.")
+        description = "Search for sounds by their name.")
     @GetMapping("/search")
     public ResponseEntity<List<SoundDto>> searchByName(
             @Parameter(description = "Name of the sound to search for")
@@ -89,7 +91,7 @@ public class SoundController {
     }
 
     @Operation(summary = "Get sounds by creator name",
-               description = "Fetch all sounds created by a some creator.")
+        description = "Fetch all sounds created by a some creator.")
     @GetMapping("/by-creator")
     public ResponseEntity<List<SoundDto>> getSoundsByCreatorName(
             @Parameter(description = "Creator name associated with the sounds")
@@ -107,7 +109,7 @@ public class SoundController {
     }
 
     @Operation(summary = "Get sounds by album name",
-               description = "Fetch all sounds associated with a specific album.")
+        description = "Fetch all sounds associated with a specific album.")
     @GetMapping("/by-album")
     public ResponseEntity<List<SoundDto>> getSoundsByAlbumName(
             @Parameter(description = "Album name associated with the sounds")
@@ -124,22 +126,21 @@ public class SoundController {
         return ResponseEntity.ok(sounds);
     }
 
-    @Operation(summary = "Create a new sounds",
-            description = "Add new sounds with the provided details.")
-    @PostMapping("/add")
-    public ResponseEntity<List<SoundDto>> createSound(
-            @Valid @RequestBody List<SoundDto> soundsDto
+    @Operation(summary = "Create a new sound",
+        description = "Add a new sound with the provided details.")
+    @PostMapping("")
+    @ResponseStatus(HttpStatus.CREATED) // Return 201 Created on success
+    public ResponseEntity<SoundDto> createSound(
+            @Valid @RequestBody SoundDto soundDto
     ) {
-        logger.info("Creating a new sounds.");
-        List<SoundDto> createdSounds = soundsDto.stream()
-                .map(soundService::createSound) // Обработка каждого элемента
-                .toList();
-        logger.info("Sounds successfully created. Total count: {}", createdSounds.size());
-        return ResponseEntity.ok(createdSounds);
+        logger.info("Creating a new sound.");
+        SoundDto createdSound = soundService.createSound(soundDto);
+        logger.info("Sound successfully created. ID: {}", createdSound.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdSound);
     }
 
     @Operation(summary = "Update sound by ID",
-            description = "Update the details of a specific sound by its ID.")
+        description = "Update the details of a specific sound by its ID.")
     @PutMapping("/{id}")
     public ResponseEntity<SoundDto> updateSound(
             @Parameter(description = "ID of the sound to update") @PathVariable long id,
@@ -147,16 +148,13 @@ public class SoundController {
     ) {
         logger.info("Updating sound with ID: {}", id);
         SoundDto updatedSound = soundService.updateSound(id, soundDto);
-        if (updatedSound == null) {
-            logger.error("Failed to update sound with ID {}. Sound not found.", id);
-            return ResponseEntity.notFound().build();
-        }
         logger.info("Sound with ID {} successfully updated.", id);
         return ResponseEntity.ok(updatedSound);
     }
 
 
-    @Operation(summary = "Delete a sound by ID", description = "Delete a specific sound by its ID.")
+    @Operation(summary = "Delete a sound by ID",
+        description = "Delete a specific sound by its ID.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSound(
             @Parameter(description = "ID of the sound to delete") @PathVariable long id) {
@@ -164,7 +162,8 @@ public class SoundController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Delete all sounds", description = "Delete all sounds from the database.")
+    @Operation(summary = "Delete all sounds",
+        description = "Delete all sounds from the database.")
     @DeleteMapping("")
     public ResponseEntity<Void> deleteAll() {
         soundService.deleteSounds();

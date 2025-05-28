@@ -26,10 +26,10 @@ public class Sound {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", columnDefinition = "text", nullable = false)
+    @Column(name = "name", columnDefinition = "text")
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE , CascadeType.PERSIST})
     @JoinTable(
             name = "sounds_creators",
             joinColumns = @JoinColumn(name = "sound_id"),
@@ -39,13 +39,13 @@ public class Sound {
     private Set<User> creators = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name = "album_id", nullable = false)
+    @JoinColumn(name = "album_id")
     private Album album;
 
     @Column(name = "text", columnDefinition = "text")
     private String text;
 
-    @Column(name = "date", columnDefinition = "date", nullable = false)
+    @Column(name = "date", columnDefinition = "date")
     private Date date;
 
     public Sound() {}
@@ -100,5 +100,18 @@ public class Sound {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Sound sound = (Sound) o;
+        return id != null && id.equals(sound.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

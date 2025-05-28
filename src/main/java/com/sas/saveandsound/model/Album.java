@@ -20,20 +20,16 @@ public class Album {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", columnDefinition = "text", nullable = false)
+    @Column(name = "name", columnDefinition = "text")
     private String name;
 
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "album", cascade = {CascadeType.MERGE , CascadeType.PERSIST})
     private Set<Sound> sounds = new HashSet<>();
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    public Album() {}
-
-    public Album(String name) {
-        this.name = name;
-    }
+    public Album() {} //because
 
     public Long getId() {
         return id;
@@ -65,5 +61,18 @@ public class Album {
 
     public void setSounds(Set<Sound> sounds) {
         this.sounds = sounds;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Album album = (Album) o;
+        return id != null && id.equals(album.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

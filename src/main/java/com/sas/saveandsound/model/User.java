@@ -23,7 +23,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", columnDefinition = "text", nullable = false)
+    @Column(name = "name", columnDefinition = "text")
     private String name;
 
     @Column(name = "role", columnDefinition = "boolean", nullable = false)
@@ -41,7 +41,7 @@ public class User {
     @Column(name = "email", columnDefinition = "text")
     private String email;
 
-    @Column(name = "nickname", columnDefinition = "text", nullable = false)
+    @Column(name = "nickname", columnDefinition = "text")
     private String nickname;
 
     public Long getId() {
@@ -91,4 +91,5 @@ public class User {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
 }

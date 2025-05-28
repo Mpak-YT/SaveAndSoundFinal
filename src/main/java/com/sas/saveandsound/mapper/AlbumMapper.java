@@ -1,16 +1,15 @@
 package com.sas.saveandsound.mapper;
 
 import com.sas.saveandsound.dto.AlbumDto;
-import com.sas.saveandsound.dto.AlbumNameDto;
 import com.sas.saveandsound.model.Album;
 import org.springframework.stereotype.Component;
-
 import java.util.stream.Collectors;
+import java.util.HashSet;
 
 @Component
 public class AlbumMapper {
 
-    private AlbumMapper() {}
+    private AlbumMapper() {} // Private constructor for static utility class
 
     public static AlbumDto toDto(Album album) {
         if (album == null) {
@@ -19,30 +18,15 @@ public class AlbumMapper {
         AlbumDto dto = new AlbumDto();
         dto.setId(album.getId());
         dto.setName(album.getName());
-        dto.setSounds(album.getSounds().stream()
-                .map(SoundMapper::toDto)
-                .collect(Collectors.toSet()));
         dto.setDescription(album.getDescription());
-        return dto;
-    }
-
-    public static AlbumNameDto toAlbumNameDto(Album album) {
-        if (album == null) {
-            return null;
+        if (album.getSounds() != null) {
+            dto.setSounds(album.getSounds().stream()
+                               .map(SoundMapper::toDto) // Use static method call
+                               .collect(Collectors.toSet()));
+        } else {
+            dto.setSounds(new HashSet<>()); // Ensure sounds collection is never null in DTO
         }
-        AlbumNameDto dto = new AlbumNameDto();
-        dto.setId(album.getId());
-        dto.setName(album.getName());
         return dto;
-    }
-
-    public static Album toEntity(AlbumNameDto dto) {
-        if (dto == null) {
-            return null;
-        }
-        Album album = new Album();
-        album.setName(dto.getName());
-        return album;
     }
 
     public static Album toEntity(AlbumDto dto) {
@@ -50,12 +34,10 @@ public class AlbumMapper {
             return null;
         }
         Album album = new Album();
+        album.setId(dto.getId());
         album.setName(dto.getName());
-        album.setSounds(dto.getSounds().stream()
-                .map(SoundMapper::toEntity)
-                .collect(Collectors.toSet()));
         album.setDescription(dto.getDescription());
+        // Sounds will be handled in AlbumService to fetch actual Sound entities
         return album;
     }
-
 }

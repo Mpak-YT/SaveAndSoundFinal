@@ -11,8 +11,7 @@ public class CreatorDto extends UserDto {
         return sounds;
     }
 
-    public void setSounds(Set<SoundDto> sounds) { // исправленный сеттер
+    public void setSounds(Set<SoundDto> sounds) {
         this.sounds = sounds;
     }
-
 }

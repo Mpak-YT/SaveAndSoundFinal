@@ -1,30 +1,26 @@
 package com.sas.saveandsound.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
+import jakarta.validation.constraints.PastOrPresent;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 public class SoundDto {
     private Long id;
-    @NotEmpty(message = "Creators list cannot be empty")
+
     private Set<UserDto> creators = new HashSet<>();
 
     @NotBlank(message = "Sound name cannot be null, empty, or contain only spaces")
-    @Size(max = 255, message = "Sound name must not exceed 255 characters")
+    @Size(min = 2, max = 100, message = "Sound name must be between 2 and 100 characters")
     private String name;
 
-    @NotNull(message = "Album must be specified")
     private AlbumNameDto album = new AlbumNameDto();
 
-    @NotNull(message = "Date cannot be null")
+    @PastOrPresent(message = "Date cannot be in the future")
     private Date date;
 
-    @NotBlank(message = "Text cannot be null, empty, or contain only spaces")
     private String text;
 
     public Long getId() {

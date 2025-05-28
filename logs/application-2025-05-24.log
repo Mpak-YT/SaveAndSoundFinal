@@ -1,0 +1,300 @@
+2025-05-24 14:48:22.362 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - Starting SaveAndSoundApplication using Java 23.0.2 with PID 4072 (A:\JavaLab\SaveAndSound\build\classes\java\main started by M in A:\JavaLab\SaveAndSound)
+2025-05-24 14:48:22.368 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-24 14:48:24.349 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-24 14:48:24.351 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-24 14:48:24.351 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-24 14:48:24.406 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-24 14:48:24.658 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-24 14:48:24.735 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-24 14:48:24.778 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-24 14:48:25.172 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-24 14:48:25.419 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3043815e
+2025-05-24 14:48:25.421 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-24 14:48:25.499 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-24 14:48:25.522 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-24 14:48:26.714 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-24 14:48:29.545 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-24 14:48:29.556 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-24 14:48:29.563 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-24 14:48:29.597 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2025-05-24 14:48:46.214 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - Starting SaveAndSoundApplication using Java 23.0.2 with PID 15664 (A:\JavaLab\SaveAndSound\build\classes\java\main started by M in A:\JavaLab\SaveAndSound)
+2025-05-24 14:48:46.216 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-24 14:48:47.994 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-24 14:48:47.996 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-24 14:48:47.996 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-24 14:48:48.048 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-24 14:48:48.279 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-24 14:48:48.327 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-24 14:48:48.356 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-24 14:48:48.711 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-24 14:48:49.049 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@115c6875
+2025-05-24 14:48:49.051 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-24 14:48:49.101 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-24 14:48:49.131 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-24 14:48:50.218 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-24 14:48:52.508 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-24 14:48:52.517 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-24 14:48:52.524 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-24 14:48:52.558 [restartedMain] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2025-05-24 14:49:09.463 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - Starting SaveAndSoundApplication using Java 23.0.2 with PID 15616 (A:\JavaLab\SaveAndSound\build\classes\java\main started by M in A:\JavaLab\SaveAndSound)
+2025-05-24 14:49:09.465 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-24 14:49:11.068 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-24 14:49:11.069 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-24 14:49:11.070 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-24 14:49:11.126 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-24 14:49:11.331 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-24 14:49:11.374 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-24 14:49:11.400 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-24 14:49:11.688 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-24 14:49:11.863 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1d8f5ece
+2025-05-24 14:49:11.870 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-24 14:49:11.913 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-24 14:49:11.932 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-24 14:49:12.906 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-24 14:49:15.736 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-24 14:49:15.769 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - Started SaveAndSoundApplication in 6.811 seconds (process running for 7.554)
+2025-05-24 14:50:48.017 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-24 14:50:48.087 [http-nio-8080-exec-1] ERROR c.s.s.e.GlobalExceptionHandler - Unexpected error occurred: No static resource .
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1088)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:978)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1743)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+2025-05-24 14:50:48.188 [http-nio-8080-exec-2] ERROR c.s.s.e.GlobalExceptionHandler - Unexpected error occurred: No static resource favicon.ico.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource favicon.ico.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1088)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:978)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1743)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1575)
+2025-05-24 15:00:08.284 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-24 15:00:08.291 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-05-24 15:00:13.439 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - Starting SaveAndSoundApplication using Java 23.0.2 with PID 22996 (A:\JavaLab\SaveAndSound\build\classes\java\main started by M in A:\JavaLab\SaveAndSound)
+2025-05-24 15:00:13.442 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - No active profile set, falling back to 1 default profile: "default"
+2025-05-24 15:00:15.140 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-05-24 15:00:15.142 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-05-24 15:00:15.142 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-05-24 15:00:15.198 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-05-24 15:00:15.425 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-05-24 15:00:15.492 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-05-24 15:00:15.526 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-05-24 15:00:15.876 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-05-24 15:00:16.066 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@568e6422
+2025-05-24 15:00:16.068 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-05-24 15:00:16.118 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-05-24 15:00:16.140 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.4
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-05-24 15:00:17.291 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-05-24 15:00:19.691 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-05-24 15:00:19.726 [restartedMain] INFO  c.s.s.SaveAndSoundApplication - Started SaveAndSoundApplication in 6.858 seconds (process running for 7.731)
+2025-05-24 15:05:44.093 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-24 15:05:44.244 [http-nio-8080-exec-1] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.AlbumController.getAllAlbums()
+2025-05-24 15:05:44.244 [http-nio-8080-exec-1] INFO  c.s.s.controller.AlbumController - Fetching all albums (AlbumDto)...
+2025-05-24 15:05:44.558 [http-nio-8080-exec-1] INFO  c.s.s.controller.AlbumController - Found 1 albums.
+2025-05-24 15:05:54.837 [http-nio-8080-exec-2] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.AlbumController.getAllAlbums()
+2025-05-24 15:05:54.837 [http-nio-8080-exec-2] INFO  c.s.s.controller.AlbumController - Fetching all albums (AlbumDto)...
+2025-05-24 15:05:54.844 [http-nio-8080-exec-2] INFO  c.s.s.controller.AlbumController - Found 1 albums.
+2025-05-24 15:07:00.774 [http-nio-8080-exec-4] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.AlbumController.getAllAlbums()
+2025-05-24 15:07:00.774 [http-nio-8080-exec-4] INFO  c.s.s.controller.AlbumController - Fetching all albums (AlbumDto)...
+2025-05-24 15:07:00.783 [http-nio-8080-exec-4] INFO  c.s.s.controller.AlbumController - Found 1 albums.
+2025-05-24 15:07:03.175 [http-nio-8080-exec-6] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:07:03.176 [http-nio-8080-exec-6] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:07:03.220 [http-nio-8080-exec-6] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:07:04.183 [http-nio-8080-exec-5] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.UserController.getAllUsers()
+2025-05-24 15:07:04.186 [http-nio-8080-exec-5] INFO  c.s.s.controller.UserController - Fetching all users... Visit count: 1
+2025-05-24 15:07:04.196 [http-nio-8080-exec-5] INFO  c.s.s.controller.UserController - Found 2 users.
+2025-05-24 15:07:06.869 [http-nio-8080-exec-7] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:07:06.869 [http-nio-8080-exec-7] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:07:06.880 [http-nio-8080-exec-7] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:07:09.181 [http-nio-8080-exec-8] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.UserController.getAllUsers()
+2025-05-24 15:07:09.181 [http-nio-8080-exec-8] INFO  c.s.s.controller.UserController - Fetching all users... Visit count: 2
+2025-05-24 15:07:09.189 [http-nio-8080-exec-8] INFO  c.s.s.controller.UserController - Found 2 users.
+2025-05-24 15:07:09.713 [http-nio-8080-exec-9] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:07:09.713 [http-nio-8080-exec-9] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:07:09.724 [http-nio-8080-exec-9] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:08:37.942 [http-nio-8080-exec-1] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:08:37.944 [http-nio-8080-exec-1] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:08:37.953 [http-nio-8080-exec-1] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:08:38.273 [http-nio-8080-exec-2] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.AlbumController.getAllAlbums()
+2025-05-24 15:08:38.275 [http-nio-8080-exec-2] INFO  c.s.s.controller.AlbumController - Fetching all albums (AlbumDto)...
+2025-05-24 15:08:38.283 [http-nio-8080-exec-2] INFO  c.s.s.controller.AlbumController - Found 1 albums.
+2025-05-24 15:08:39.324 [http-nio-8080-exec-3] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:08:39.328 [http-nio-8080-exec-3] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:08:39.338 [http-nio-8080-exec-3] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:08:41.350 [http-nio-8080-exec-4] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.AlbumController.getAllAlbums()
+2025-05-24 15:08:41.350 [http-nio-8080-exec-4] INFO  c.s.s.controller.AlbumController - Fetching all albums (AlbumDto)...
+2025-05-24 15:08:41.356 [http-nio-8080-exec-4] INFO  c.s.s.controller.AlbumController - Found 1 albums.
+2025-05-24 15:08:42.577 [http-nio-8080-exec-6] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:08:42.579 [http-nio-8080-exec-6] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:08:42.589 [http-nio-8080-exec-6] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:08:43.419 [http-nio-8080-exec-5] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.UserController.getAllUsers()
+2025-05-24 15:08:43.421 [http-nio-8080-exec-5] INFO  c.s.s.controller.UserController - Fetching all users... Visit count: 3
+2025-05-24 15:08:43.425 [http-nio-8080-exec-5] INFO  c.s.s.controller.UserController - Found 2 users.
+2025-05-24 15:08:44.053 [http-nio-8080-exec-7] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:08:44.063 [http-nio-8080-exec-7] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:08:44.072 [http-nio-8080-exec-7] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:08:47.685 [http-nio-8080-exec-8] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.UserController.getAllUsers()
+2025-05-24 15:08:47.685 [http-nio-8080-exec-8] INFO  c.s.s.controller.UserController - Fetching all users... Visit count: 4
+2025-05-24 15:08:47.691 [http-nio-8080-exec-8] INFO  c.s.s.controller.UserController - Found 2 users.
+2025-05-24 15:08:49.582 [http-nio-8080-exec-9] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:08:49.583 [http-nio-8080-exec-9] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:08:49.593 [http-nio-8080-exec-9] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:08:50.953 [http-nio-8080-exec-10] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.AlbumController.getAllAlbums()
+2025-05-24 15:08:50.953 [http-nio-8080-exec-10] INFO  c.s.s.controller.AlbumController - Fetching all albums (AlbumDto)...
+2025-05-24 15:08:50.961 [http-nio-8080-exec-10] INFO  c.s.s.controller.AlbumController - Found 1 albums.
+2025-05-24 15:09:00.864 [http-nio-8080-exec-1] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:09:00.864 [http-nio-8080-exec-1] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:09:00.876 [http-nio-8080-exec-1] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:09:02.795 [http-nio-8080-exec-2] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.UserController.getAllUsers()
+2025-05-24 15:09:02.798 [http-nio-8080-exec-2] INFO  c.s.s.controller.UserController - Fetching all users... Visit count: 5
+2025-05-24 15:09:02.807 [http-nio-8080-exec-2] INFO  c.s.s.controller.UserController - Found 2 users.
+2025-05-24 15:09:04.771 [http-nio-8080-exec-3] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.AlbumController.getAllAlbums()
+2025-05-24 15:09:04.771 [http-nio-8080-exec-3] INFO  c.s.s.controller.AlbumController - Fetching all albums (AlbumDto)...
+2025-05-24 15:09:04.777 [http-nio-8080-exec-3] INFO  c.s.s.controller.AlbumController - Found 1 albums.
+2025-05-24 15:10:10.934 [http-nio-8080-exec-6] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.AlbumController.getAllAlbums()
+2025-05-24 15:10:10.934 [http-nio-8080-exec-6] INFO  c.s.s.controller.AlbumController - Fetching all albums (AlbumDto)...
+2025-05-24 15:10:10.947 [http-nio-8080-exec-6] INFO  c.s.s.controller.AlbumController - Found 1 albums.
+2025-05-24 15:11:06.236 [http-nio-8080-exec-5] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 15:11:06.236 [http-nio-8080-exec-5] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 15:11:06.249 [http-nio-8080-exec-5] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 15:11:07.878 [http-nio-8080-exec-7] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.UserController.getAllUsers()
+2025-05-24 15:11:07.878 [http-nio-8080-exec-7] INFO  c.s.s.controller.UserController - Fetching all users... Visit count: 6
+2025-05-24 15:11:07.883 [http-nio-8080-exec-7] INFO  c.s.s.controller.UserController - Found 2 users.
+2025-05-24 15:11:09.750 [http-nio-8080-exec-8] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.AlbumController.getAllAlbums()
+2025-05-24 15:11:09.750 [http-nio-8080-exec-8] INFO  c.s.s.controller.AlbumController - Fetching all albums (AlbumDto)...
+2025-05-24 15:11:09.756 [http-nio-8080-exec-8] INFO  c.s.s.controller.AlbumController - Found 1 albums.
+2025-05-24 15:16:38.056 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=4m51s691ms362µs800ns).
+2025-05-24 22:09:34.521 [HikariPool-1 housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6h52m59s705ms631µs400ns).
+2025-05-24 22:09:44.002 [http-nio-8080-exec-10] INFO  c.s.s.aspect.LoggingAspect - Controller method invoked: ResponseEntity com.sas.saveandsound.controller.SoundController.getAllSounds()
+2025-05-24 22:09:44.002 [http-nio-8080-exec-10] INFO  c.s.s.controller.SoundController - Fetching all sounds...
+2025-05-24 22:09:44.019 [http-nio-8080-exec-10] INFO  c.s.s.controller.SoundController - Found 2 sounds.
+2025-05-24 22:11:21.441 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-05-24 22:11:21.448 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
