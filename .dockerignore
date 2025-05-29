@@ -1,0 +1,4 @@
+build
+frontend
+src/main/resources/application.properties
+.env
