@@ -10,7 +10,6 @@ import com.sas.saveandsound.repository.UserRepository;
 import com.sas.saveandsound.repository.SoundRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Set;
@@ -23,13 +22,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final SoundRepository soundRepository;
+    private final UserService self;
 
-    @Autowired
-    private UserService self; // Инжектируем сам сервис для вызова транзакционных методов
-
-    public UserService(UserRepository userRepository, SoundRepository soundRepository) {
+    public UserService(UserRepository userRepository, SoundRepository soundRepository, UserService self) {
         this.userRepository = userRepository;
         this.soundRepository = soundRepository;
+        this.self = self;
     }
 
     public List<UserDto> getAllUsers() {
@@ -82,8 +80,8 @@ public class UserService {
                 .filter(dto -> dto != null && dto.getId() != null)
                 .map(dto -> {
                     try {
-                        return self.updateUser(dto.getId(), dto); // Используем инжектированный `self`
-                    } catch (UserNotFoundException | IllegalArgumentException ex) {
+                        return self.updateUser(dto.getId(), dto);
+                    } catch (UserNotFoundException | IllegalArgumentException _) {
                         return null;
                     }
                 })
