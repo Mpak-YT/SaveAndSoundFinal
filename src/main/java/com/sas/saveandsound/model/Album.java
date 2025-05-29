@@ -29,7 +29,10 @@ public class Album {
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
-    public Album() {} //because
+    public Album() {
+    // Конструктор нужен для работы с ORM / десериализации
+    }
+
 
     public Long getId() {
         return id;
