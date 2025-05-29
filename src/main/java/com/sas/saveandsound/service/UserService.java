@@ -10,6 +10,7 @@ import com.sas.saveandsound.repository.UserRepository;
 import com.sas.saveandsound.repository.SoundRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,9 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final SoundRepository soundRepository;
+
+    @Autowired
+    private UserService self; // Инжектируем сам сервис для вызова транзакционных методов
 
     public UserService(UserRepository userRepository, SoundRepository soundRepository) {
         this.userRepository = userRepository;
@@ -64,23 +68,8 @@ public class UserService {
         User user = Optional.ofNullable(userRepository.findById(id))
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
 
-        if (userDto.getName() != null) user.setName(userDto.getName());
-        if (userDto.getEmail() != null) user.setEmail(userDto.getEmail());
-        if (userDto.getNickname() != null) user.setNickname(userDto.getNickname());
-        user.setRole(userDto.getRole());
-
-        if (userDto instanceof CreatorDto creatorDto && creatorDto.getSounds() != null) {
-            Set<Sound> newSounds = creatorDto.getSounds().stream()
-                    .map(soundDto -> soundRepository.findById(soundDto.getId()).orElse(null))
-                    .filter(sound -> sound != null)
-                    .peek(sound -> {
-                        if (sound.getCreators() == null) sound.setCreators(new HashSet<>());
-                        sound.getCreators().add(user);
-                        soundRepository.save(sound);
-                    })
-                    .collect(Collectors.toSet());
-            user.setSounds(newSounds);
-        }
+        updateUserFields(user, userDto);
+        updateUserSounds(user, userDto);
 
         User saved = userRepository.save(user);
         return Boolean.TRUE.equals(saved.getRole()) ? UserMapper.toCreatorDto(saved) : UserMapper.toDto(saved);
@@ -93,7 +82,7 @@ public class UserService {
                 .filter(dto -> dto != null && dto.getId() != null)
                 .map(dto -> {
                     try {
-                        return updateUser(dto.getId(), dto);
+                        return self.updateUser(dto.getId(), dto); // Используем инжектированный `self`
                     } catch (UserNotFoundException | IllegalArgumentException ex) {
                         return null;
                     }
@@ -109,5 +98,28 @@ public class UserService {
 
     public void deleteUsers() {
         userRepository.deleteAll();
+    }
+
+    private void updateUserFields(User user, UserDto userDto) {
+        if (userDto.getName() != null) user.setName(userDto.getName());
+        if (userDto.getEmail() != null) user.setEmail(userDto.getEmail());
+        if (userDto.getNickname() != null) user.setNickname(userDto.getNickname());
+        user.setRole(userDto.getRole());
+    }
+
+    private void updateUserSounds(User user, UserDto userDto) {
+        if (!(userDto instanceof CreatorDto creatorDto) || creatorDto.getSounds() == null) return;
+
+        Set<Sound> newSounds = creatorDto.getSounds().stream()
+                .map(soundDto -> soundRepository.findById(soundDto.getId()).orElse(null))
+                .filter(sound -> sound != null)
+                .peek(sound -> {
+                    if (sound.getCreators() == null) sound.setCreators(new HashSet<>());
+                    sound.getCreators().add(user);
+                    soundRepository.save(sound);
+                })
+                .collect(Collectors.toSet());
+
+        user.setSounds(newSounds);
     }
 }
