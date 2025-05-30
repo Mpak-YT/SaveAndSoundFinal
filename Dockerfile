@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1.7-labs
 FROM openjdk:23-jdk-slim AS jre-build
 
 RUN "$JAVA_HOME/bin/jlink" \
@@ -9,6 +8,9 @@ RUN "$JAVA_HOME/bin/jlink" \
     --output /jre
 
 
+
+
+
 FROM --platform=$BUILDPLATFORM openjdk:23-jdk-slim AS app-build
 
 # see .dockerignore
@@ -17,6 +19,10 @@ COPY --parents config gradle src build.gradle gradlew gradlew.bat settings.gradl
 WORKDIR /app/repo
 RUN JAVA_OPTS="-Dhttp.socketTimeout=60000 -Dhttps.socketTimeout=60000" ./gradlew bootJar
 RUN cp /app/repo/build/libs/*.jar /app/app.jar
+
+
+
+
 
 
 FROM openjdk:23-jdk-slim
